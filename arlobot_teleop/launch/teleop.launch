@@ -1,0 +1,17 @@
+<launch>
+
+    <!-- Arlobot Teleop is composed of:
+            * xboxdrv
+            * joy joy_node
+            * arlobot_teleop teleopnode.py
+    -->
+
+    <!-- Start teleop node -->
+    <node name="joynode" pkg="joy" type="joy_node" output="screen" respawn="true">
+        <param name="dev" type="string" value="/dev/input/js0" />
+    </node>
+
+    <node name="teleopnode" pkg="arlobot_teleop" type="teleopnode.py" output="screen" respawn="true">
+    </node>
+
+</launch>

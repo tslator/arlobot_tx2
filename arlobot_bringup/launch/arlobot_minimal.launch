@@ -1,0 +1,33 @@
+<launch>
+
+    <!-- Arlobot is composed of two fundamental nodes:
+            * HAL Node - a node that provides an abstraction interface and communications with various devices, e.g., PSOC, IMU, etc
+            * Drive Node - a node that implements the drive semantics for Arlobot accepting cmd_vel messages, publishing odometry
+              messages and communicating with the Arlobot hardware (via the HAL node), e.g., speed, distance, orientation, etc.
+    -->
+
+    <!-- Start the HAL node -->
+    <node name="halnode" pkg="arlobot_bringup" type="halnode.py" output="screen" respawn="true">
+    </node>
+
+    <!-- Start the Drive node -->
+    <node name="drivenode" pkg="arlobot_bringup" type="drivenode.py" output="screen" respawn="true">
+    </node>
+
+    <!-- Start the sensor node -->
+    <node name="sensornode" pkg="arlobot_bringup" type="sensornode.py" output="screen" respawn="true">
+    </node>
+
+    <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+        <param name="output_frame" value="odom_combined"/>
+        <param name="base_footprint_frame" value="base_footprint"/>
+        <param name="freq" value="30.0"/>
+        <param name="sensor_timeout" value="1.0"/>
+        <param name="odom_used" value="true"/>
+        <param name="imu_used" value="true"/>
+        <!--<param name="vo_used" value="true"/>-->
+
+        <!--remap from="odom" to="pr2_base_odometry/odom" />-->
+    </node>
+
+</launch>

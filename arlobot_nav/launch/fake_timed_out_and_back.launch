@@ -1,0 +1,5 @@
+<launch>
+    <!-- Include fake arlobot -->
+    <!-- Run sim Rviz config -->
+    <!-- Run timed out and back node -->
+</launch>
