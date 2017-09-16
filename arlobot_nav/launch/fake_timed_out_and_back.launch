@@ -1,5 +1,11 @@
 <launch>
-    <!-- Include fake arlobot -->
-    <!-- Run sim Rviz config -->
+    <!-- Start the fake arlobot with rviz -->
+    <include file="$(find arlobot_bringup)/launch/fake_arlobot_rviz.launch"/>
+
     <!-- Run timed out and back node -->
+    <node
+        pkg="arlobot_nav"
+        name="timed_out_and_back"
+        type="timed_out_and_back.py"
+        output="screen"></node>
 </launch>

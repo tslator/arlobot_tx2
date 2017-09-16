@@ -1,0 +1,37 @@
+<launch>
+
+    <arg name="enable_hal" value="false"/>
+    <arg name="enable_drive" value="false"/>
+    <arg name="enable_sensor" value="false"/>
+    <arg name="enable_fake" value="false"/>
+
+    <!--
+    This launch file instantiates the arlobot nodes:
+        - halnode   : provides an abstraction interface and communications with various devices, e.g., PSOC, IMU, etc
+        - drivenode : implements the drive semantics for Arlobot accepting cmd_vel messages, publishing odometry
+                      messages and communicating with the Arlobot hardware (via the HAL node), e.g., speed, distance,
+                      orientation, etc.
+        - sensornode: implements aggregation and transformation of various sensor inputs
+    -->
+
+    <!-- Start the HAL node -->
+    <node if="$(arg enable_hal)" name="halnode" pkg="arlobot_bringup" type="halnode.py" output="screen" respawn="true">
+    </node>
+
+    <!-- Start the Drive node -->
+    <node if="$(arg enable_drive)" name="drivenode" pkg="arlobot_bringup" type="drivenode.py" output="screen" respawn="true">
+    </node>
+
+    <!-- Start the sensor node -->
+    <node if="$(arg enable_sensor)" name="sensornode" pkg="arlobot_bringup" type="sensornode.py" output="screen" respawn="true">
+    </node>
+
+
+    <node if="$(arg enable_fake)" name="fakenode" pkg="arlobot_bringup" type="fakenode.py" output="screen" respawn="true">
+    </node>
+
+    <!--
+    Add support for robot_pose_ekf here
+    -->
+
+</launch>

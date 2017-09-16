@@ -1,0 +1,19 @@
+<launch>
+
+    <!--
+    This launch file contains nodes related to the robot model and representation
+    -->
+
+    <include file="$(find arlobot_bringup)/launch/includes/description.launch.xml"/>
+
+    <node
+        pkg="robot_state_publisher"
+        name="robot_state_publisher"
+        type="robot_state_publisher"
+        >
+
+        <param name="publish_frequency" type="double" value="5.0" />
+    </node>
+
+
+</launch>

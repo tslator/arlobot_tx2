@@ -1,32 +1,5 @@
-"""
+#! /usr/bin/env python
 
-The purpose of this node is two fold:
-  1. Implement a ROS node that performs the "Timed Out and Back" task
-  2. Exposes a service that executes this task
-
-
-* Timed Out and Back Requirements
-
-1. Drive the robot forward for the specified distance at the specified speed
-2. Rotate the robot 180 degrees at the specified speed
-3. Drive the robot forward for the specified distance at the specified speed
-4. Rotate the robot 180 degrees at the specified speed
-
-Initialize Node
-    - Set linear distance
-    - Set linear speed
-    - Set angular distance
-    - Set angular speed
-    - Set loop rate
-    - Create cmd_vel publisher
-
-Data Structure
-
-    - list of moves
-    - each move is a type (linear, angular), distance, speed
-        - type and speed can be combined as a Twist
-
-"""
 
 
 # Standard Library
@@ -36,6 +9,7 @@ from collections import namedtuple
 # Third-Party
 import rospy
 from geometry_msgs.msg import Twist, Vector3
+from arlobot_bringup.msg import HALPositionIn
 
 # Project
 #from basenode import BaseNode
@@ -48,46 +22,103 @@ class OutAndBack(object):
         rospy.on_shutdown(self.shutdown)
 
         self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
+        self.sub = rospy.Subscriber('HALPositionIn', HALPositionIn, self._positionin_cb)
 
-        linear_distance = 1.0
-        linear_speed = 0.2
-        angular_distance = math.radians(180)
-        angular_speed = 1.0
+        linear_speed = 0.0081675
+        angular_speed = 0.013
+        timer = rospy.Rate(10)
 
-        rate = 10
-        timer = rospy.Rate(rate)
+        delta = 0
+        t = Twist()
+        t.linear.x=linear_speed
+        t.angular.z=0.0
 
-        Move = namedtuple('Move', 'linear angular ticks timer')
+        while not rospy.is_shutdown() and delta < 5.0:
 
-        forward = Move(linear=Vector3(x=linear_speed), angular=Vector3(), ticks=self.ticks(linear_distance, linear_speed, rate), timer=timer)
-        stop = Move(linear=Vector3(), angular=Vector3(), ticks=1, timer=timer)
-        rotate = Move(linear=Vector3(), angular=Vector3(z=1.0), ticks=self.ticks(angular_distance, angular_speed, rate), timer=timer)
+            # Move forward for 10 seconds
+            self.pub.publish(t)
+            timer.sleep()
+            delta += 0.1
+            rospy.loginfo("Delta: {}".format(delta))
+
+
+
+        '''
+        self.rate = 20.0
+        #self.timer = rospy.Rate(self.rate)
+        self.x = 0
+        self.y = 0
+        self._positionin_received = False
+
+        Move = namedtuple('Move', 'linear angular timeout dist')
+
+        forward = Move(linear=Vector3(x=linear_speed), angular=Vector3(), timeout=30, dist=1.0)
+        stop = Move(linear=Vector3(), angular=Vector3(), timeout=1.0, dist=0.0)
+        rotate = Move(linear=Vector3(), angular=Vector3(z=angular_speed), timeout=40, dist=math.pi*0.1969)
 
         moves = [
             forward,
             stop,
+        ]
             rotate,
             stop,
             forward,
             stop,
             rotate,
             stop
-        ]
+
+        while not self._positionin_received:
+            pass
 
         for m in moves:
             rospy.loginfo("Publishing {}".format(m))
-            self.do_move(m)
+            m.move(m)
+            if rospy.is_shutdown():
+                break
+        rospy.loginfo("Timed out and back complete")
+        '''
 
-    def ticks(self, dist, speed, rate):
+    def _positionin_cb(self, msg):
+        self._positionin_received = True
+        self.x = msg.x
+        self.y = msg.y
+
+    def _headingin_cb(self, msg):
+        self.heading = msg.heading
+
+    def ticks(self, dist, speed):
         try:
-            return int((dist/speed) * rate)
+            return int((dist/speed)*self.rate)
         except ZeroDivisionError:
             return 0
 
-    def do_move(self, move):
-        for t in range(move.ticks):
+    def do_angular_move(self, move):
+        start_pos = self.heading
+        curr_pos = start_pos
+        end_time = rospy.Time.now() + rospy.Duration(move.timeout)
+
+        while curr_pos - start_pos > move.dist and rospy.Time.now() < end_time:
             self.pub.publish(Twist(linear=move.linear, angular=move.angular))
-            move.timer.sleep()
+            rospy.sleep(move.sleep)
+            curr_pos = self.heading
+            if rospy.is_shutdown():
+                break
+
+        rospy.loginfo("Dist: {}".format(curr_pos - start_pos))
+
+    def do_linear_move(self, move):
+
+        start_pos = math.sqrt(self.x**2 + self.y**2)
+        curr_pos = start_pos
+        end_time = rospy.Time.now() + rospy.Duration(move.timeout)
+        while curr_pos - start_pos < move.dist and rospy.Time.now() < end_time:
+            self.pub.publish(Twist(linear=move.linear, angular=move.angular))
+            rospy.sleep(move.sleep)
+            curr_pos = math.sqrt(self.x ** 2 + self.y ** 2)
+            if rospy.is_shutdown():
+                break
+
+        rospy.loginfo("Dist: {}".format(curr_pos - start_pos))
 
     def shutdown(self):
         rospy.loginfo("Stopping the robot ...")

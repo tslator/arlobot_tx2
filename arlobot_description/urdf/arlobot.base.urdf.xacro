@@ -44,14 +44,17 @@
     </macro>
 
     <macro name="wheel" params="parent suffix reflect color">
-        <!-- Note: type is fixed here.  tried continuous but then the link is lost.  not sure why though -->
+        <!-- Note: type is fixed.  continuous is possible but then joint_states would need to be published.  For
+        visualization its not particularly necessary to have the wheels turn.  Maybe in Gazebo simulation it will be
+        required.  If that is the case, then of course something in Arlobot mobile base will need to publish the
+        joint_states.
+         -->
         <joint name="${parent}_${suffix}_wheel_joint" type="fixed">
-            <axis xyz="0 0 1" />
-            <limit effort="100" velocity="100"/>
-            <safety_controller k_velocity="10" />
-            <origin xyz="${wheel_offset_x} ${reflect*wheel_offset_y} ${wheel_offset_z}" rpy="${reflect*PI/2} 0 0" />
             <parent link="${parent}_link"/>
             <child link="${suffix}_wheel_link"/>
+            <origin xyz="${wheel_offset_x} ${reflect*wheel_offset_y} ${wheel_offset_z}" rpy="${reflect*PI/2} 0 0" />
+            <limit effort="0.1" velocity="0.01"/>
+            <axis xyz="0 0 1" />
         </joint>
 
         <link name="${suffix}_wheel_link">

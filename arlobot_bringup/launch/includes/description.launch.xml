@@ -1,0 +1,18 @@
+<launch>
+
+
+    <!--
+    This launch file processes the URDF/XACRO files contained in the robot description and assigns the robot_description
+    parameter.
+    -->
+
+    <!--
+    <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find arlobot_description)/robots/arlobot_base.urdf'"/>
+    <param name="robot_description" command="$(arg urdf_file)"/>
+    -->
+
+    <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find arlobot_description)/urdf/arlobot.main.urdf.xacro'"/>
+    <param name="robot_description" command="$(arg urdf_file)"/>
+
+
+</launch>

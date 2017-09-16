@@ -1,0 +1,16 @@
+<launch>
+
+    <!--
+    This is the root launch file to launch the arlobot robot.  It contains:
+        - robot.launch.xml : launches nodes related to the robot model
+        - mobile_base.launch.xml : launches nodes related to robot base (real or simulated)
+    -->
+
+    <param name="/use_sim_time" value="False"/>
+
+    <include file="$(find arlobot_bringup)/launch/includes/robot.launch.xml"/>
+
+    <include file="$(find arlobot_bringup)/launch/includes/mobile_base.launch.xml"/>
+
+
+</launch>

@@ -28,7 +28,6 @@ from copy import copy
 # Third-Party
 import rospy
 from geometry_msgs.msg import Twist, Quaternion, Pose, Point, Vector3
-from tf import transformations
 
 # Project
 from basenode import BaseNode
@@ -62,7 +61,6 @@ AngularMax = namedtuple('AngularMax', 'ccw cw accel decel wheel')
 Classes
 ---------------------------------------------------------------------------------------------------
 """
-
 
 #---------------------------------------------------------------------------------------------------
 
@@ -122,8 +120,6 @@ class OdometryState(object):
     def set_orientation(self, yaw=0.0, pitch=0.0, roll=0.0):
         # Limit yaw to -pi/2 to pi/2
         self.heading = yaw if yaw <= math.pi else yaw - (2 * math.pi)
-        q = transformations.quaternion_from_euler(roll, pitch, yaw)
-        self.quat = q[0], q[1], q[2], q[3]
         self._euler_ready = True
 
 #---------------------------------------------------------------------------------------------------
@@ -368,13 +364,11 @@ class DriveNode(BaseNode):
         :return: None
         """
         if self._odometry.is_ready():
-            self._odom_pub.publish(self._odometry.cdist,
-                                   #self._vel_state.target_velocity.linear,
-                                   #self._vel_state.target_velocity.angular,
+            self._odom_pub.publish(self._odometry.x,
+                                   self._odometry.y,
                                    self._odometry.velocity.linear,
                                    self._odometry.velocity.angular,
-                                   self._odometry.heading,
-                                   self._odometry.quat)
+                                   self._odometry.heading)
 
     def _velocity_has_changed(self):
         return (not isclose(self._vel_state.target_velocity.linear, self._vel_state.last_velocity.linear) or
@@ -400,12 +394,12 @@ class DriveNode(BaseNode):
 
             if self._cmd_vel_state.is_recent(num_msgs=5, max_time=2.0):
 
-                v = self._cmd_vel_state.velocity.linear
-                w = self._cmd_vel_state.velocity.angular
+                v_initial = self._cmd_vel_state.velocity.linear
+                w_initial = self._cmd_vel_state.velocity.angular
 
                 # Ensure linear and angular velocity are within mecahnical and user-defined ranges
-                v = constrain(v, self._linear_max.backward, self._linear_max.forward)
-                w = constrain(w, self._angular_max.cw, self._angular_max.ccw)
+                v = constrain(v_initial, self._linear_max.backward, self._linear_max.forward)
+                w = constrain(w_initial, self._angular_max.cw, self._angular_max.ccw)
 
                 # Ensure the specified angular velocity can be achieved.
                 #
@@ -416,6 +410,8 @@ class DriveNode(BaseNode):
 
                 # Note: Will adjust linear velocity if necessary
                 v, w = ensure_w(v, w, self._track_width, self._wheel_radius, self._angular_max.wheel)
+
+                rospy.loginfo("SafetyCheck: initial {:.3f} {:.3f}, constrained {:.3f} {:.3f}".format(v_initial, w_initial, v, w))
 
                 self._vel_state.target_velocity.set(v, w)
 
@@ -428,7 +424,8 @@ class DriveNode(BaseNode):
             self._vel_state.zero_target()
 
     def _limit_accel(self):
-        rospy.logdebug("LA Entry - {}, {}".format(self._vel_state.last_velocity, self._vel_state.target_velocity))
+        lv_initial = self._vel_state.last_velocity
+        tv_initial = self._vel_state.target_velocity
 
         # Calculate the desired and max velocity increments for linear and angular velocities
         v_inc, max_v_inc = calc_vel_inc(self._vel_state.target_velocity.linear,
@@ -469,7 +466,11 @@ class DriveNode(BaseNode):
         self._vel_state.target_velocity.linear = self._vel_state.last_velocity.linear + v_delta
         self._vel_state.target_velocity.angular = self._vel_state.last_velocity.angular + w_delta
 
-        rospy.logdebug("LA Exit - {}, {}".format(self._vel_state.last_velocity, self._vel_state.target_velocity))
+        rospy.logdebug("LimitAccel - initial {} {}, resulting {} {}".format(
+            lv_initial,
+            tv_initial,
+            self._vel_state.last_velocity,
+            self._vel_state.target_velocity))
 
     def _track_velocity(self):
         """
@@ -504,7 +505,6 @@ class DriveNode(BaseNode):
 
         if self._velocity_has_changed():
             rospy.logdebug("Velocity Changed")
-
             self._limit_accel()
 
         else:
@@ -547,7 +547,6 @@ class DriveNode(BaseNode):
 
             # Publish odometry
             self._publish_odom()
-
 
             rospy.loginfo("Linear(T/O): {:6.3f}/{:6.3f}, Angular(T/O): {:6.3f}/{:6.3f}".format(
                 self._vel_state.target_velocity.linear,

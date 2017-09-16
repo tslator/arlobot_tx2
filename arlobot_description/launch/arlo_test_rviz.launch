@@ -1,10 +1,9 @@
 <launch>
 
-    <!-- Start fake arlobot -->
-    <include file="$(find arlobot_bringup)/launch/fake_arlobot_minimal.launch"/>
+    <include file="$(find arlobot_description)/launch/arlo_test.launch" />
 
     <!-- Start rviz -->
     <node name="modelvisualisation" pkg="rviz" type="rviz" output="screen" args="-d $(find arlobot_bringup)/sim.rviz" />
 
-  
+
 </launch>

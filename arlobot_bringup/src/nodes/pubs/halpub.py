@@ -44,7 +44,7 @@ class HALPublisherBase(object):
     """
     __FMT_STR = "Publishing {}:"
 
-    def __init__(self, msg_str, msg_type, frame_id='/base_link', queue_size=1):
+    def __init__(self, msg_str, msg_type, frame_id='/base_footprint', queue_size=1):
         self._publisher = rospy.Publisher(msg_str, msg_type, queue_size=queue_size)
         self._msg_str = msg_str
         self._msg_type = msg_type

@@ -1,0 +1,91 @@
+<robot name="arlobot">
+
+    <material name="Black">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+    </material>
+
+    <material name="TransparentGreen">
+        <color rgba="0.0 0.8 0.0 0.5"/>
+    </material>
+
+    <material name="Orange">
+        <color rgba="1.0  0.55 0.0 1.0"/>
+    </material>
+
+    <link name="base_footprint">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+              <box size="0.05 0.05 0.001" />
+          </geometry>
+          <material name="TransparentGreen" />
+        </visual>
+    </link>
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.1778 0.36195 0.0762" />
+            </geometry>
+            <material name="Black" />
+      </visual>
+      <!--
+      <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+              <box size="0.1778 0.36195 0.0762" />
+          </geometry>
+        </collision>
+        -->
+    </link>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link" />
+        <!-- Note: The wheels extend radius - z offset below the battery box so we must offset the base_joint by that
+        same amount in order for the robot to reset at 0 offset on the Z axis
+        -->
+        <origin xyz="0 0 0.0584" rpy="0 0 0" />
+    </joint>
+
+
+    <link name="left_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.0762" length="0.0254"/>
+            </geometry>
+            <material name="Orange" />
+        </visual>
+    </link>
+
+    <joint name="base_left_wheel_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="left_wheel_link"/>
+        <origin xyz="0.00 0.206375 0.0178" rpy="1.57075 0 0" />
+        <limit effort="0.1" velocity="0.01"/>
+        <axis xyz="0 0 1" />
+    </joint>
+
+    <link name="right_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.0762" length="0.0254"/>
+            </geometry>
+            <material name="Orange" />
+        </visual>
+    </link>
+
+    <joint name="base_right_wheel_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="right_wheel_link"/>
+        <origin xyz="0.00 -0.206375 0.0178" rpy="-1.57075 0 0" />
+        <limit effort="0.1" velocity="0.01"/>
+        <axis xyz="0 0 1" />
+    </joint>
+
+
+
+</robot>

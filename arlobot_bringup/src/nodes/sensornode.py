@@ -108,6 +108,9 @@ class SensorNode(BaseNode):
         rospy.loginfo("SensorNode init")
 
         # Publishers
+        # Note: The sensor node aggregates all sensors including the Imu.  Data from the Imu is used by a many different
+        # nodes for different purposes.  The sensor node is publishing orientation, linear acceleration and angular
+        # velocity.
         self._imu_pub = ImuPublisher(frame_id='imu_data')
 
         # Range Array publishers - publish each sensor individually as <sensor>_x

@@ -68,7 +68,7 @@ class OdometryPublisher:
         self._odom_msg.header.frame_id = "odom"
         self._odom_msg.child_frame_id = "base_link"
 
-    def _msg(self, now, x_dist, y_dist, quat, v, w):
+    def _msg(self, now, x, y, quat, v, w):
         """
         Updates the Odometry message
         :param now: Current time 
@@ -80,10 +80,13 @@ class OdometryPublisher:
         :return: Odometry message
         """
         self._odom_msg.header.stamp = now
-        self._odom_msg.pose.pose = Pose(Point(x_dist, y_dist, 0.0), Quaternion(*quat))
+        self._odom_msg.pose.pose.position.x = x
+        self._odom_msg.pose.pose.position.y = y
+        self._odom_msg.pose.pose.position.z = 0
+        self._odom_msg.pose.pose.orientation = quat
         self._odom_msg.twist.twist = Twist(Vector3(v, 0, 0), Vector3(0, 0, w))
    
-        if x_dist == 0 and y_dist == 0 and v == 0 and w == 0:
+        if x == 0 and y == 0 and v == 0 and w == 0:
             self._odom_msg.pose.covariance = ODOM_POSE_COVARIANCE2
             self._odom_msg.twist.covariance = ODOM_TWIST_COVARIANCE2
         else:
@@ -92,7 +95,7 @@ class OdometryPublisher:
 
         return self._odom_msg
 
-    def publish(self, cdist, v, w, heading, quat, log=False):
+    def publish(self, x, y, v, w, heading, log=False):
         """
         Publishes an Odometry message
         :param cdist: Center (or average) distance of wheel base
@@ -104,21 +107,24 @@ class OdometryPublisher:
         """
         now = Time.now()
 
-        x_dist = cdist * math.cos(heading)
-        y_dist = cdist * math.sin(heading)
-        
-        self._broadcaster.sendTransform((x_dist, y_dist, 0), 
-                                         quat, 
+        quat = Quaternion()
+        quat.x = 0.0
+        quat.y = 0.0
+        quat.z = math.sin(heading / 2)
+        quat.w = math.cos(heading / 2)
+
+        self._broadcaster.sendTransform((x, y, 0),
+                                        (quat.x, quat.y, quat.z, quat.w),
                                          now,
                                          "base_footprint",
                                          "odom")
 
-        self._publisher.publish(self._msg(now, x_dist, y_dist, quat, v, w))
+        self._publisher.publish(self._msg(now, x, y, quat, v, w))
 
         if log:
             loginfo("Publishing Odometry: heading {:02.3f}, dist {:02.3f}, velocity {:02.3f}/{:02.3f}".format(
                 heading,
-                cdist,
+                math.sqrt(x**2 + y**2),
                 v, w))
 
 
