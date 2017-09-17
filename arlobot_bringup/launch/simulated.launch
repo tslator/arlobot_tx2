@@ -1,0 +1,18 @@
+<launch>
+
+    <!-- Launches Arlobot in simulation -->
+
+    <include file="$(find arlobot_bringup)/launch/minimal.launch">
+        <arg name="simulated" value="true"/>
+    </include>
+
+    <!-- Start rviz -->
+    <node
+        name="modelvisualisation"
+        pkg="rviz"
+        type="rviz"
+        output="screen"
+        args="-d $(find arlobot_bringup)/sim.rviz"
+    />
+
+</launch>

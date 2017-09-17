@@ -1,9 +1,8 @@
 <launch>
 
-    <arg name="enable_hal" value="false"/>
-    <arg name="enable_drive" value="false"/>
-    <arg name="enable_sensor" value="false"/>
-    <arg name="enable_fake" value="false"/>
+    <arg name="simulated" default="false" doc="Determines whether to instantiate real or simulated Arlobot"/>
+    <arg name="enable_hal" default="true"/>
+    <arg name="enable_sensor" default="true"/>
 
     <!--
     This launch file instantiates the arlobot nodes:
@@ -14,24 +13,17 @@
         - sensornode: implements aggregation and transformation of various sensor inputs
     -->
 
-    <!-- Start the HAL node -->
-    <node if="$(arg enable_hal)" name="halnode" pkg="arlobot_bringup" type="halnode.py" output="screen" respawn="true">
+    <group unless="$(arg simulated)" >
+        <!-- Start the HAL node -->
+        <node if="$(arg enable_hal)" name="halnode" pkg="arlobot_bringup" type="halnode.py" output="screen" respawn="true">
+        </node>
+
+        <!-- Start the sensor node -->
+        <node if="$(arg enable_sensor)" name="sensornode" pkg="arlobot_bringup" type="sensornode.py" output="screen" respawn="true">
+        </node>
+    </group>
+
+    <node name="drivenode" pkg="arlobot_bringup" type="drivenodefactory.py" output="screen" respawn="true">
     </node>
-
-    <!-- Start the Drive node -->
-    <node if="$(arg enable_drive)" name="drivenode" pkg="arlobot_bringup" type="drivenode.py" output="screen" respawn="true">
-    </node>
-
-    <!-- Start the sensor node -->
-    <node if="$(arg enable_sensor)" name="sensornode" pkg="arlobot_bringup" type="sensornode.py" output="screen" respawn="true">
-    </node>
-
-
-    <node if="$(arg enable_fake)" name="fakenode" pkg="arlobot_bringup" type="fakenode.py" output="screen" respawn="true">
-    </node>
-
-    <!--
-    Add support for robot_pose_ekf here
-    -->
 
 </launch>

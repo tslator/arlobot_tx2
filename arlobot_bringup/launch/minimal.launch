@@ -1,5 +1,7 @@
 <launch>
 
+    <arg name="simulated"/>
+
     <!--
     This is the root launch file to launch the arlobot robot.  It contains:
         - robot.launch.xml : launches nodes related to the robot model
@@ -10,7 +12,9 @@
 
     <include file="$(find arlobot_bringup)/launch/includes/robot.launch.xml"/>
 
-    <include file="$(find arlobot_bringup)/launch/includes/mobile_base.launch.xml"/>
+    <include file="$(find arlobot_bringup)/launch/includes/mobile_base.launch.xml">
+        <arg name="simulated" value="$(arg simulated)"/>
+    </include>
 
 
 </launch>

@@ -1,9 +1,13 @@
 <launch>
 
+    <arg name="simulated"/>
     <!--
     This launch file contains nodes that startup the robot base.  In the case of Turtlbot, multiple bases are supported.
     For arlobot, there is just one base, but for now we'll keep the same hierarchy
     -->
-    <include file="$(find arlobot_bringup)/launch/includes/arlobot/mobile_base.launch.xml"/>
+
+    <include file="$(find arlobot_bringup)/launch/includes/arlobot/mobile_base.launch.xml">
+        <arg name="simulated" value="$(arg simulated)"/>
+    </include>
 
 </launch>

@@ -17,6 +17,7 @@ from hw.messages import SpeedData
 class FakeArlobotNodeError(Exception):
     pass
 
+
 class FakeArlobotNode(BaseNode):
     def __init__(self):
         super(FakeArlobotNode, self).__init__(name='FakeArlobotNode', debug=None)
@@ -76,11 +77,12 @@ class FakeArlobotNode(BaseNode):
         while not rospy.is_shutdown():
             now = rospy.Time.now()
             if now > self.t_next:
-                elapsed = now - self.then
-                self.then = now
-                elapsed = elapsed.to_sec()
 
                 if self.fake:
+                    elapsed = now - self.then
+                    self.then = now
+                    elapsed = elapsed.to_sec()
+
                     x = cos(self.th)*self.dx*elapsed
                     y = -sin(self.th)*self.dx*elapsed
                     self.x += cos(self.th)*self.dx*elapsed

@@ -45,19 +45,19 @@ class OutAndBack():
         linear_speed = 0.2
 
         # Set the travel distance to 1.0 meters
-        goal_distance = 0.75
+        goal_distance = 1.0
 
         # How long should it take us to get there?
         linear_duration = goal_distance / linear_speed
 
         # Set the rotation speed to 1.0 radians per second
-        angular_speed = 1.0
+        angular_speed = 0.5
 
         # Set the rotation angle to Pi radians (180 degrees)
         goal_angle = pi
 
         # How long should it take to rotate?
-        angular_duration = (goal_angle / angular_speed) * 0.585
+        angular_duration = (goal_angle / angular_speed)
 
         # Loop through the two legs of the trip
         for i in range(2):

@@ -31,10 +31,19 @@
 
   <include file="$(find arlobot_bringup)/launch/includes/robot.launch.xml"/>
 
-  <node pkg="arlobot_bringup" name="halnode" type="halnode.py" output="screen">
+  <!-- Define argument 'simulated' to control which nodes are instantiated -->
+  <arg name="simulated" value="true"/>
+
+  <node unless="$(arg simulated)" pkg="arlobot_bringup" name="halnode" type="halnode.py" output="screen">
   </node>
 
-  <node pkg="arlobot_bringup" name="fake_arlobot" type="fake_arlobot.py" output="screen">
+  <!-- Define parameter 'simulated' to control instantiation of drive node
+    Note: parameter must be defined in outside the scope of the drive node factory
+    so that it can be used as the basis for instantiation
+  -->
+  <param name="simulated" value="$(arg simulated)"/>
+
+  <node pkg="arlobot_bringup" name="drivenode" type="drivenodefactory.py" output="screen">
   </node>
 
 </launch>
