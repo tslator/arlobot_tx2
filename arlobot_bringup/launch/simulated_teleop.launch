@@ -1,0 +1,10 @@
+<launch>
+
+    <include file="$(find arlobot_bringup)/launch/minimal.launch">
+        <arg name="simulated" value="true"/>
+    </include>
+
+    <include file="$(find arlobot_teleop)/launch/teleop.launch"/>
+
+
+</launch>
