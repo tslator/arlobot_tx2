@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="simulated" default="false" doc="Determines whether to instantiate real or simulated Arlobot"/>
+    <arg name="simulated"/>
     <arg name="enable_hal" default="true"/>
     <arg name="enable_sensor" default="true"/>
 
@@ -22,6 +22,8 @@
         <node if="$(arg enable_sensor)" name="sensornode" pkg="arlobot_bringup" type="sensornode.py" output="screen" respawn="true">
         </node>
     </group>
+
+    <param name="simulated" value="$(arg simulated)"/>
 
     <node name="drivenode" pkg="arlobot_bringup" type="drivenodefactory.py" output="screen" respawn="true">
     </node>

@@ -6,14 +6,12 @@ from math import cos, sin
 
 import rospy
 from geometry_msgs.msg import Twist
-from geometry_msgs.msg import Quaternion
-from nav_msgs.msg import Odometry
-from tf.broadcaster import TransformBroadcaster
 
 from basenode import BaseNode
 from hw.messages import SpeedData
 from arlobot_bringup.msg import HALSpeedIn, HALPositionIn, HALHeadingIn
 from pubs.halpub import HALSpeedOutPublisher
+from pubs.odompub import OdometryPublisher
 
 
 class DriveNodeBase(BaseNode):
@@ -33,15 +31,10 @@ class DriveNodeBase(BaseNode):
         self.dr = 0
 
         self.last_cmd = rospy.Time.now()
-        self.t_delta = rospy.Duration(1.0/self.rate)
-        self.t_next = rospy.Time.now() + self.t_delta
-
-        self.base_frame_id = 'base_footprint'
-        self.odom_frame_id = 'odom'
+        self._timer = rospy.Rate(self.rate)
 
         self._sub = rospy.Subscriber('/cmd_vel', Twist, self._cmd_vel_callback)
-        self.odomPub = rospy.Publisher("odom", Odometry, queue_size=5)
-        self.odomBroadcaster = TransformBroadcaster()
+        self._odom_pub = OdometryPublisher()
 
     def _cmd_vel_callback(self, msg):
         self.last_cmd = rospy.Time.now()
@@ -57,36 +50,7 @@ class DriveNodeBase(BaseNode):
         self.dr = 0
 
     def _broadcast(self, now):
-        #--------------------------------------------------
-        # Note: change this to use the odom publisher classes
-        #--------------------------------------------------
-
-        # Update odometry and broadcast
-        quaternion = Quaternion()
-        quaternion.x = 0.0
-        quaternion.y = 0.0
-        quaternion.z = sin(self.th / 2)
-        quaternion.w = cos(self.th / 2)
-        self.odomBroadcaster.sendTransform(
-            (self.x, self.y, 0),
-            (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-            now,
-            self.base_frame_id,
-            self.odom_frame_id
-        )
-
-        odom = Odometry()
-        odom.header.stamp = now
-        odom.header.frame_id = self.odom_frame_id
-        odom.pose.pose.position.x = self.x
-        odom.pose.pose.position.y = self.y
-        odom.pose.pose.position.z = 0
-        odom.pose.pose.orientation = quaternion
-        odom.child_frame_id = self.base_frame_id
-        odom.twist.twist.linear.x = self.dx
-        odom.twist.twist.linear.y = 0
-        odom.twist.twist.angular.z = self.dr
-        self.odomPub.publish(odom)
+        self._odom_pub.publish(now, self.x, self.y, self.dx, self.dr, self.th)
 
     def start(self):
         self._stop()
@@ -95,13 +59,9 @@ class DriveNodeBase(BaseNode):
         while not rospy.is_shutdown():
             now = rospy.Time.now()
 
-            # Consider changing this to use sleep instead
-            if now > self.t_next:
-
-                self._update(now)
-                self._broadcast(now)
-
-                self.t_next = now + self.t_delta
+            self._update(now)
+            self._broadcast(now)
+            self._timer.sleep()
 
     def shutdown(self):
         self._stop()

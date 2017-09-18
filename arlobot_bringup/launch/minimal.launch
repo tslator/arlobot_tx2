@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="simulated"/>
+    <arg name="simulated" default="false"/>
 
     <!--
     This is the root launch file to launch the arlobot robot.  It contains:

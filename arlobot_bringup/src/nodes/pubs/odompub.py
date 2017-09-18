@@ -61,12 +61,14 @@ ODOM_TWIST_COVARIANCE2 = [1e-9, 0, 0, 0, 0, 0,
                           0, 0, 0, 0, 0, 1e-9]
 
 class OdometryPublisher:
-    def __init__(self, queue_size=5):
+    def __init__(self, frame="odom", child_frame="base_footprint", queue_size=5):
+        self._frame_id = frame
+        self._child_frame_id = child_frame
         self._publisher = Publisher("odom", Odometry, queue_size=queue_size)
         self._broadcaster = TransformBroadcaster()
         self._odom_msg = Odometry()
-        self._odom_msg.header.frame_id = "odom"
-        self._odom_msg.child_frame_id = "base_link"
+        self._odom_msg.header.frame_id = self._frame_id
+        self._odom_msg.child_frame_id = self._child_frame_id
 
     def _msg(self, now, x, y, quat, v, w):
         """
@@ -86,16 +88,9 @@ class OdometryPublisher:
         self._odom_msg.pose.pose.orientation = quat
         self._odom_msg.twist.twist = Twist(Vector3(v, 0, 0), Vector3(0, 0, w))
    
-        if x == 0 and y == 0 and v == 0 and w == 0:
-            self._odom_msg.pose.covariance = ODOM_POSE_COVARIANCE2
-            self._odom_msg.twist.covariance = ODOM_TWIST_COVARIANCE2
-        else:
-            self._odom_msg.pose.covariance = ODOM_POSE_COVARIANCE
-            self._odom_msg.twist.covariance = ODOM_TWIST_COVARIANCE
-
         return self._odom_msg
 
-    def publish(self, x, y, v, w, heading, log=False):
+    def publish(self, now, x, y, v, w, heading, log=False):
         """
         Publishes an Odometry message
         :param cdist: Center (or average) distance of wheel base
@@ -105,8 +100,6 @@ class OdometryPublisher:
         :param quat: Quaternion of orientation
         :return: None
         """
-        now = Time.now()
-
         quat = Quaternion()
         quat.x = 0.0
         quat.y = 0.0
@@ -116,8 +109,8 @@ class OdometryPublisher:
         self._broadcaster.sendTransform((x, y, 0),
                                         (quat.x, quat.y, quat.z, quat.w),
                                          now,
-                                         "base_footprint",
-                                         "odom")
+                                         self._child_frame_id,
+                                         self._frame_id)
 
         self._publisher.publish(self._msg(now, x, y, quat, v, w))
 
