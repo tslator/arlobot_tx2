@@ -1,5 +1,7 @@
 import math
+
 from transforms import calc_vel_inc, normalize_vector
+
 
 def uni2diff(v, w, L, R):
     """

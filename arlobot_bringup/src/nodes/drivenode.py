@@ -2,17 +2,17 @@
 
 
 
-from math import cos, sin, atan2, copysign, fabs
+from math import cos, sin
 
 import rospy
+from arlobot_bringup.msg import HALSpeedIn, HALPositionIn, HALHeadingIn
+from basenode import BaseNode
 from geometry_msgs.msg import Twist
 
-from basenode import BaseNode
+from motion import velocity_smoother
 from hw.messages import SpeedData
-from arlobot_bringup.msg import HALSpeedIn, HALPositionIn, HALHeadingIn
 from pubs.halpub import HALSpeedOutPublisher
 from pubs.odompub import OdometryPublisher
-from utils.motion import velocity_smoother
 
 
 class DriveNodeBase(BaseNode):
@@ -138,10 +138,6 @@ class RealDriveNode(DriveNodeBase):
 
     def _headingin_cb(self, msg):
         self.meas_th = msg.heading
-
-    def _stop(self):
-        super(RealDriveNode, self)._stop()
-        self._speedout_pub.publish(SpeedData(linear=self.cmd_v, angular=self.cmd_w))
 
 
 class SimulatedDriveNode(DriveNodeBase):

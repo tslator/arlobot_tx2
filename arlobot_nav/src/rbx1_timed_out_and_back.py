@@ -77,7 +77,7 @@ class OutAndBack():
             # Stop the robot before the rotation
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
-            rospy.sleep(2)
+            rospy.sleep(5)
 
             # Now rotate left roughly 180 degrees
 
@@ -94,7 +94,7 @@ class OutAndBack():
             # Stop the robot before the next leg
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
-            rospy.sleep(2)
+            rospy.sleep(5)
 
             # Stop the robot
         self.cmd_vel.publish(Twist())

@@ -10,7 +10,8 @@
         - drivenode : implements the drive semantics for Arlobot accepting cmd_vel messages, publishing odometry
                       messages and communicating with the Arlobot hardware (via the HAL node), e.g., speed, distance,
                       orientation, etc.
-        - sensornode: implements aggregation and transformation of various sensor inputs
+        - sensornode: implements aggregation and transformation of various sensor inputs (e.g. infrared/ultrasonic
+                      sensors as laser scan.
     -->
 
     <group unless="$(arg simulated)" >
@@ -23,6 +24,10 @@
         </node>
     </group>
 
+    <!-- Start the drive node
+        Note: the simulated parameter must set prior to the drive node tag so that the factory can use the parameter
+        for instantiation.
+    -->
     <param name="simulated" value="$(arg simulated)"/>
 
     <node name="drivenode" pkg="arlobot_bringup" type="drivenodefactory.py" output="screen" respawn="true">

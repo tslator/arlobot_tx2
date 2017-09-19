@@ -1,8 +1,8 @@
 loop rate: 20
 timeout: 3.0
-linear max accel: 0.5
-linear max decel: 0.5
-angular max accel: 0.75
-angular max decel: 0.75
+linear max accel: 0.0
+linear max decel: 0.0
+angular max accel: 0.0
+angular max decel: 0.0
 
 

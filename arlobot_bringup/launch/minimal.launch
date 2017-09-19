@@ -13,6 +13,7 @@
     <include file="$(find arlobot_bringup)/launch/includes/robot.launch.xml"/>
 
     <include file="$(find arlobot_bringup)/launch/includes/mobile_base.launch.xml">
+        <rosparam command="load" file="$(find arlobot_bringup)/config/arlobot.yaml"/>
         <arg name="simulated" value="$(arg simulated)"/>
     </include>
 
