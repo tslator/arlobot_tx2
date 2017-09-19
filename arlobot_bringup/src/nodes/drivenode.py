@@ -22,27 +22,28 @@ class DriveNodeBase(BaseNode):
     def __init__(self, name, debug):
         super(DriveNodeBase, self).__init__(name=name, debug=debug)
 
-        self.rate = 20.0
-        self.timeout = 3.0
+        self.rate = rospy.get_param('loop rate', 20.0)
+        self.timeout = rospy.get_param('timeout', 3.0)
+        self._linear_max_accel = rospy.get_param('linear max accel', 0.5)
+        self._linear_max_decel = rospy.get_param('linear max decel', 0.5)
+        self._angular_max_accel = rospy.get_param('angular max accel', 0.75)
+        self._angular_max_decel = rospy.get_param('linear max decel', 0.75)
+
+        self.dx = 0
+        self.last_dx = 0
+        self.dr = 0
+        self.last_dr = 0
 
         self.x = 0
         self.y = 0
         self.th = 0
-        self.dx = 0
-        self.dr = 0
-        self.now = rospy.Time.now()
-
-        self.last_cmd = rospy.Time.now()
-        self.last_dx = 0
-        self.last_dr = 0
         self.last_th = 0
+
+        self.now = rospy.Time.now()
+        self.last_cmd = rospy.Time.now()
+
         self.period = 1.0/self.rate
         self._timer = rospy.Rate(self.rate)
-
-        self._linear_max_accel = 0.2
-        self._linear_max_decel = 0.2
-        self._angular_max_accel = 0.6
-        self._angular_max_decel = 0.6
 
         self._sub = rospy.Subscriber('/cmd_vel', Twist, self._cmd_vel_callback)
         self._odom_pub = OdometryPublisher()
