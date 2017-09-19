@@ -81,7 +81,7 @@ class DriveNodeBase(BaseNode):
         self.cmd_w = self.last_w
 
     def _process(self):
-        self._limit_accel()
+        #self._limit_accel()
         if self.now > (self.last_cmd + rospy.Duration(self.timeout)):
             self._stop()
 

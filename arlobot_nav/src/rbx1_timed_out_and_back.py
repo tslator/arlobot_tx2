@@ -51,7 +51,7 @@ class OutAndBack():
         linear_duration = goal_distance / linear_speed
 
         # Set the rotation speed to 1.0 radians per second
-        angular_speed = 0.5
+        angular_speed = 1.0
 
         # Set the rotation angle to Pi radians (180 degrees)
         goal_angle = pi

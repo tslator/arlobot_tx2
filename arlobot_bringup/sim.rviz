@@ -465,7 +465,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 0
+      Angle: 0.110000014
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -478,8 +478,8 @@ Visualization Manager:
       Scale: 174.531067
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 0.586290002
-      Y: 0.289217502
+      X: 0.679160416
+      Y: 0.0746596903
     Saved: ~
 Window Geometry:
   Displays:
