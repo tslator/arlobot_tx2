@@ -29,14 +29,16 @@ class DriveNodeBase(BaseNode):
         self._angular_max_accel = rospy.get_param('angular max accel', 0.75)
         self._angular_max_decel = rospy.get_param('linear max decel', 0.75)
 
-        self.dx = 0
-        self.last_dx = 0
-        self.dr = 0
-        self.last_dr = 0
+        self.cmd_v = 0
+        self.meas_v = 0
+        self.last_v = 0
+        self.cmd_w = 0
+        self.meas_w = 0
+        self.last_w = 0
 
-        self.x = 0
-        self.y = 0
-        self.th = 0
+        self.meas_x = 0
+        self.meas_y = 0
+        self.meas_th = 0
         self.last_th = 0
 
         self.now = rospy.Time.now()
@@ -50,42 +52,42 @@ class DriveNodeBase(BaseNode):
 
         # Create list of broadcasters and add odometry
         self._broadcasts = [
-            lambda : self._odom_pub.publish(self.now, self.x, self.y, self.dx, self.dr, self.th)
+            lambda : self._odom_pub.publish(self.now, self.meas_x, self.meas_y, self.meas_v, self.meas_w, self.meas_th)
         ]
 
     def _cmd_vel_callback(self, msg):
         self.last_cmd = rospy.Time.now()
-        self.dx = msg.linear.x
-        self.dr = msg.angular.z
+        self.cmd_v = msg.linear.x
+        self.cmd_w = msg.angular.z
 
     def _limit_accel(self):
 
         v_delta, w_delta = velocity_smoother(
-            self.dx,
-            self.last_dx,
+            self.cmd_v,
+            self.last_v,
             self._linear_max_accel,
             self._linear_max_decel,
-            self.dr,
-            self.last_dr,
+            self.cmd_w,
+            self.last_w,
             self._angular_max_accel,
             self._angular_max_decel,
             self.period
         )
 
-        self.last_dx += v_delta
-        self.last_dr += w_delta
+        self.last_v += v_delta
+        self.last_w += w_delta
 
-        self.dx = self.last_dx
-        self.dr = self.last_dr
+        self.cmd_v = self.last_v
+        self.cmd_w = self.last_w
 
     def _process(self):
+        self._limit_accel()
         if self.now > (self.last_cmd + rospy.Duration(self.timeout)):
             self._stop()
-        self._limit_accel()
 
     def _stop(self):
-        self.dx = 0
-        self.dr = 0
+        self.cmd_v = 0
+        self.cmd_w = 0
 
     def _broadcast(self):
         for b in self._broadcasts:
@@ -121,25 +123,25 @@ class RealDriveNode(DriveNodeBase):
 
         # Add a speed out broadcast
         self._broadcasts.append(
-            lambda : self._speedout_pub.publish(SpeedData(linear=self.dx, angular=self.dr))
+            lambda : self._speedout_pub.publish(SpeedData(linear=self.cmd_v, angular=self.cmd_w))
         )
 
         rospy.loginfo("Instantiated real drive node")
 
     def _speedin_cb(self, msg):
-        self.dx = msg.linear
-        self.dr = msg.angular
+        self.meas_v = msg.linear
+        self.meas_w = msg.angular
 
     def _positionin_cb(self, msg):
-        self.x = msg.x
-        self.y = msg.y
+        self.meas_x = msg.x
+        self.meas_y = msg.y
 
     def _headingin_cb(self, msg):
-        self.th = msg.heading
+        self.meas_th = msg.heading
 
     def _stop(self):
         super(RealDriveNode, self)._stop()
-        self._speedout_pub.publish(SpeedData(linear=self.dx, angular=self.dr))
+        self._speedout_pub.publish(SpeedData(linear=self.cmd_v, angular=self.cmd_w))
 
 
 class SimulatedDriveNode(DriveNodeBase):
@@ -159,11 +161,11 @@ class SimulatedDriveNode(DriveNodeBase):
         self.then = self.now
         elapsed = elapsed.to_sec()
 
-        x = cos(self.th) * self.dx * elapsed
-        y = -sin(self.th) * self.dx * elapsed
-        self.x += cos(self.th) * self.dx * elapsed
-        self.y += sin(self.th) * self.dx * elapsed
-        self.th += self.dr * elapsed
+        x = cos(self.meas_th) * self.cmd_v * elapsed
+        y = -sin(self.meas_th) * self.cmd_v * elapsed
+        self.meas_x += cos(self.meas_th) * self.cmd_v * elapsed
+        self.meas_y += sin(self.meas_th) * self.cmd_v * elapsed
+        self.meas_th += self.cmd_w * elapsed
 
 
 # --- EOF ---
