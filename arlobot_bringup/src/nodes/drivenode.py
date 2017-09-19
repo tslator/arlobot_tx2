@@ -139,7 +139,7 @@ class RealDriveNode(DriveNodeBase):
 
     def _stop(self):
         super(RealDriveNode, self)._stop()
-        self._speedout_pub.publish(Twist())
+        self._speedout_pub.publish(SpeedData(linear=self.dx, angular=self.dr))
 
 
 class SimulatedDriveNode(DriveNodeBase):
