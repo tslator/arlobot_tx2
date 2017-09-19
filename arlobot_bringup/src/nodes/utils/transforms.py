@@ -40,11 +40,6 @@ def normalize_angle(angle):
     return res
 
 
-def module_test():
-    print(__name__, "Module Test")
-
-
-# --- EOF ---
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
@@ -67,11 +62,21 @@ def constrain(x, x_min, x_max):
 
 def normalize_vector(x, y):
     M = math.sqrt(x ** 2 + y ** 2)
-    _x = math.fabs(x) / M
-    _y = math.fabs(y) / M
+    try:
+        _x = math.fabs(x) / M
+        _y = math.fabs(y) / M
+    except ZeroDivisionError:
+        return x, y
 
     return _x, _y
 
 def quat_to_angle(quat):
     _, _, yaw = tf.transformations.euler_from_quaternion([quat.x, quat.y, quat.z, quat.w])
     return yaw
+
+
+def module_test():
+    print(__name__, "Module Test")
+
+
+# --- EOF ---
