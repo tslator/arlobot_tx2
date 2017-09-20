@@ -25,16 +25,16 @@ class DriveNodeBase(BaseNode):
         self.rate = rospy.get_param('loop rate', 20.0)
         self.timeout = rospy.get_param('timeout', 3.0)
 
-        self.max_v_accel = rospy.get_param('linear max accel', 0.5)
-        self.max_v_decel = rospy.get_param('linear max decel', 0.5)
-        self.max_w_accel = rospy.get_param('angular max accel', 0.75)
-        self.max_w_decel = rospy.get_param('linear max decel', 0.75)
+        self.max_v_accel = rospy.get_param('linear max accel', 0.5) / self.rate
+        self.max_v_decel = rospy.get_param('linear max decel', 0.5) / self.rate
+        self.max_w_accel = rospy.get_param('angular max accel', 0.5) / self.rate
+        self.max_w_decel = rospy.get_param('linear max decel', 0.5) / self.rate
 
         self.cmd_v = 0
         self.curr_v = 0
         self.meas_v = 0
         self.last_v = 0
-        
+
         self.cmd_w = 0
         self.curr_w = 0
         self.meas_w = 0
@@ -67,30 +67,27 @@ class DriveNodeBase(BaseNode):
     def _process(self):
 
         # Limit linear/angular acceleration
-        '''
         if self.curr_v < self.cmd_v:
-            self.curr_v += self.max_v_accel
-
+            self.curr_v = min(self.curr_v + self.max_v_accel, self.cmd_v)
         elif self.curr_v > self.cmd_v:
-            self.curr_v -= self.max_v_decel
+            self.curr_v = min(self.curr_v - self.max_v_decel, self.cmd_v)
+        else:
+            self.curr_v = self.cmd_v
 
         if self.curr_w < self.cmd_w:
-            self.curr_w += self.max_w_accel
-
-        elif self.curr_w > self.cmd_w:
-            self.curr_w -= self.max_w_decel
-        '''
-
-        self.curr_v = self.cmd_v
-        self.curr_w = self.cmd_w
+            self.curr_w = min(self.curr_w + self.max_w_accel, self.cmd_w)
+        elif self.curr_w > self.cmd_v:
+            self.curr_w = min(self.curr_w - self.max_w_decel, self.cmd_w)
+        else:
+            self.curr_v = self.cmd_v
 
         # Safety check if communication is lost
         if self.now > (self.last_cmd + rospy.Duration(self.timeout)):
             self._stop()
 
     def _stop(self):
-        self.cmd_v = 0
-        self.cmd_w = 0
+        self.curr_v = 0
+        self.curr_w = 0
 
     def _broadcast(self):
         for b in self._broadcasts:
