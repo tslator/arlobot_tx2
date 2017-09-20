@@ -24,15 +24,19 @@ class DriveNodeBase(BaseNode):
 
         self.rate = rospy.get_param('loop rate', 20.0)
         self.timeout = rospy.get_param('timeout', 3.0)
-        self._linear_max_accel = rospy.get_param('linear max accel', 0.5)
-        self._linear_max_decel = rospy.get_param('linear max decel', 0.5)
-        self._angular_max_accel = rospy.get_param('angular max accel', 0.75)
-        self._angular_max_decel = rospy.get_param('linear max decel', 0.75)
+
+        self.max_v_accel = rospy.get_param('linear max accel', 0.5)
+        self.max_v_decel = rospy.get_param('linear max decel', 0.5)
+        self.max_w_accel = rospy.get_param('angular max accel', 0.75)
+        self.max_w_decel = rospy.get_param('linear max decel', 0.75)
 
         self.cmd_v = 0
+        self.curr_v = 0
         self.meas_v = 0
         self.last_v = 0
+        
         self.cmd_w = 0
+        self.curr_w = 0
         self.meas_w = 0
         self.last_w = 0
 
@@ -60,28 +64,22 @@ class DriveNodeBase(BaseNode):
         self.cmd_v = msg.linear.x
         self.cmd_w = msg.angular.z
 
-    def _limit_accel(self):
-
-        v_delta, w_delta = velocity_smoother(
-            self.cmd_v,
-            self.last_v,
-            self._linear_max_accel,
-            self._linear_max_decel,
-            self.cmd_w,
-            self.last_w,
-            self._angular_max_accel,
-            self._angular_max_decel,
-            self.period
-        )
-
-        self.last_v += v_delta
-        self.last_w += w_delta
-
-        self.cmd_v = self.last_v
-        self.cmd_w = self.last_w
-
     def _process(self):
-        #self._limit_accel()
+
+        # Limit linear/angular acceleration
+        if self.curr_v < self.cmd_v:
+            self.curr_v += self.max_v_accel
+
+        elif self.curr_v > self.cmd_v:
+            self.curr_v -= self.max_v_decel
+
+        if self.curr_w < self.cmd_w:
+            self.curr_w += self.max_w_accel
+
+        elif self.curr_w > self.cmd_w:
+            self.curr_w -= self.max_w_decel
+
+        # Safety check if communication is lost
         if self.now > (self.last_cmd + rospy.Duration(self.timeout)):
             self._stop()
 
@@ -123,7 +121,7 @@ class RealDriveNode(DriveNodeBase):
 
         # Add a speed out broadcast
         self._broadcasts.append(
-            lambda : self._speedout_pub.publish(SpeedData(linear=self.cmd_v, angular=self.cmd_w))
+            lambda : self._speedout_pub.publish(SpeedData(linear=self.curr_v, angular=self.curr_w))
         )
 
         rospy.loginfo("Instantiated real drive node")
@@ -157,11 +155,11 @@ class SimulatedDriveNode(DriveNodeBase):
         self.then = self.now
         elapsed = elapsed.to_sec()
 
-        x = cos(self.meas_th) * self.cmd_v * elapsed
-        y = -sin(self.meas_th) * self.cmd_v * elapsed
-        self.meas_x += cos(self.meas_th) * self.cmd_v * elapsed
-        self.meas_y += sin(self.meas_th) * self.cmd_v * elapsed
-        self.meas_th += self.cmd_w * elapsed
+        x = cos(self.meas_th) * self.curr_v * elapsed
+        y = -sin(self.meas_th) * self.curr_v * elapsed
+        self.meas_x += cos(self.meas_th) * self.curr_v * elapsed
+        self.meas_y += sin(self.meas_th) * self.curr_v * elapsed
+        self.meas_th += self.curr_w * elapsed
 
 
 # --- EOF ---
