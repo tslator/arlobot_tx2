@@ -38,13 +38,13 @@ class OutAndBack():
         self.cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
 
         # How fast will we update the robot's movement?
-        rate = 20
+        rate = 50
 
         # Set the equivalent ROS rate variable
         r = rospy.Rate(rate)
 
         # Set the forward linear speed to 0.15 meters per second
-        linear_speed = 0.15
+        linear_speed = 0.2
 
         # Set the travel distance in meters
         goal_distance = 1.0
@@ -116,7 +116,7 @@ class OutAndBack():
             # Stop the robot before the rotation
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
-            rospy.sleep(1)
+            rospy.sleep(2)
 
             # Set the movement command to a rotation
             move_cmd.angular.z = angular_speed
@@ -145,7 +145,7 @@ class OutAndBack():
             # Stop the robot before the next leg
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
-            rospy.sleep(1)
+            rospy.sleep(2)
 
         # Stop the robot for good
         self.cmd_vel.publish(Twist())

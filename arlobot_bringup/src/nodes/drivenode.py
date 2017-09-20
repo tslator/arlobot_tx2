@@ -67,6 +67,7 @@ class DriveNodeBase(BaseNode):
     def _process(self):
 
         # Limit linear/angular acceleration
+        '''
         if self.curr_v < self.cmd_v:
             self.curr_v += self.max_v_accel
 
@@ -78,6 +79,10 @@ class DriveNodeBase(BaseNode):
 
         elif self.curr_w > self.cmd_w:
             self.curr_w -= self.max_w_decel
+        '''
+
+        self.curr_v = self.cmd_v
+        self.curr_w = self.cmd_w
 
         # Safety check if communication is lost
         if self.now > (self.last_cmd + rospy.Duration(self.timeout)):
