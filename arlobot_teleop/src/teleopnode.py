@@ -82,8 +82,8 @@ class TeleopNode(basenode.BaseNode):
 
         rospy.loginfo("TeleopNode init")
 
-        self._linear_scale = rospy.get_param("Linear Scale", 0.064)
-        self._angular_scale = rospy.get_param("Angular Scale", 0.323)
+        self._linear_scale = rospy.get_param("Linear Scale", 1.0)
+        self._angular_scale = rospy.get_param("Angular Scale", 1.0)
 
         self._pub = rospy.Publisher('cmd_vel', Twist, queue_size=2)
         self._sub = rospy.Subscriber('joy', Joy, self._joy_callback)
@@ -100,8 +100,8 @@ class TeleopNode(basenode.BaseNode):
         velocity = Velocity(*joy.axes[:2])
 
         twist = Twist()
-        twist.angular.z = self._angular_scale * velocity.angular
-        twist.linear.x = self._linear_scale * velocity.linear
+        twist.angular.z = velocity.angular #self._angular_scale * velocity.angular
+        twist.linear.x = velocity.linear #self._linear_scale * velocity.linear
         log_format = 'Deadman: {}, Linear: {:.3f}, Angular: {:.3f}'.format(buttons.LB,  twist.linear.x, twist.angular.z)
         rospy.logdebug(log_format)
         self._last_published = twist

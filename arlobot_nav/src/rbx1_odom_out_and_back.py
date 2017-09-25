@@ -116,7 +116,7 @@ class OutAndBack():
             # Stop the robot before the rotation
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
-            rospy.sleep(2)
+            rospy.sleep(3)
 
             # Set the movement command to a rotation
             move_cmd.angular.z = angular_speed
@@ -145,7 +145,7 @@ class OutAndBack():
             # Stop the robot before the next leg
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
-            rospy.sleep(2)
+            rospy.sleep(3)
 
         # Stop the robot for good
         self.cmd_vel.publish(Twist())

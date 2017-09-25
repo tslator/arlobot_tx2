@@ -9,7 +9,6 @@ from arlobot_bringup.msg import HALSpeedIn, HALPositionIn, HALHeadingIn
 from basenode import BaseNode
 from geometry_msgs.msg import Twist
 
-from motion import velocity_smoother
 from hw.messages import SpeedData
 from pubs.halpub import HALSpeedOutPublisher
 from pubs.odompub import OdometryPublisher
@@ -67,6 +66,7 @@ class DriveNodeBase(BaseNode):
     def _process(self):
 
         # Limit linear/angular acceleration
+        '''
         if self.curr_v < self.cmd_v:
             self.curr_v = min(self.curr_v + self.max_v_accel, self.cmd_v)
         elif self.curr_v > self.cmd_v:
@@ -80,6 +80,7 @@ class DriveNodeBase(BaseNode):
             self.curr_w = min(self.curr_w - self.max_w_decel, self.cmd_w)
         else:
             self.curr_v = self.cmd_v
+        '''
 
         # Safety check if communication is lost
         if self.now > (self.last_cmd + rospy.Duration(self.timeout)):
