@@ -1,0 +1,11 @@
+<launch>
+
+
+    <!-- Launches Arlobot and Rviz -->
+
+    <include file="$(find arlobot_bringup)/launch/minimal.launch"/>
+
+    <include file="$(find arlobot_teleop)/launch/teleop.launch"/>
+
+
+</launch>
