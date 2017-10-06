@@ -19,7 +19,7 @@ Imports
 """
 
 # Standard
-# None
+import sys
 
 # Third-Party
 import can
@@ -131,11 +131,22 @@ class PsocHwFactory:
             raise PsocHwFactoryError("Unable to instantiate Psoc hardware", err)
 
 
-def module_test():
-    pass
+def module_test(selection):
+
+    def callback(msg):
+        logger.debug(msg)
+
+    logger = Logger()
+    if selection == 'can':
+        pass
+    elif selection == 'i2c':
+        PsocHwFactory.create_i2c(callback, logger)
+    elif selection == 'mock':
+        pass
 
 if __name__ == "__main__":
-    module_test()
+    #module_test(sys.argv[1])
+    module_test('i2c')
 
 
 #--- EOF ---

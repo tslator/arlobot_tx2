@@ -82,6 +82,9 @@ class DriveNodeBase(BaseNode):
             self.curr_v = self.cmd_v
         '''
 
+        self.curr_v = self.cmd_v
+        self.curr_w = self.cmd_w
+
         # Safety check if communication is lost
         if self.now > (self.last_cmd + rospy.Duration(self.timeout)):
             self._stop()
