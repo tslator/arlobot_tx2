@@ -6,7 +6,7 @@
          right below base_link origin, navigation stack depends on this frame -->
 
     <!-- The base xacro macro -->
-    <macro name="base" params="color">
+    <xacro:macro name="base" params="color">
         <link name="base_footprint">
             <visual>
               <origin xyz="0 0 0" rpy="0 0 0" />
@@ -41,9 +41,9 @@
             <parent link="base_footprint"/>
             <child link="base_link" />
         </joint>
-    </macro>
+    </xacro:macro>
 
-    <macro name="wheel" params="parent suffix reflect color">
+    <xacro:macro name="wheel" params="parent suffix reflect color">
         <!-- Note: type is fixed.  continuous is possible but then joint_states would need to be published.  For
         visualization its not particularly necessary to have the wheels turn.  Maybe in Gazebo simulation it will be
         required.  If that is the case, then of course something in Arlobot mobile base will need to publish the
@@ -67,7 +67,7 @@
             </visual>
         </link>
 
-    </macro>
+    </xacro:macro>
 
     <wheel parent="base" suffix="left" reflect="1" color="Orange"/>
     <wheel parent="base" suffix="right" reflect="-1" color="Orange"/>

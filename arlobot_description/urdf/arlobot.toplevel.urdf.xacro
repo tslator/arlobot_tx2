@@ -24,7 +24,7 @@
     <!-- The top level macro essentially defines the top platter of the Arlobot.  There are four 5 in standoffs/supports
     which mount on the midlevel platter.
     -->
-    <macro name="toplevel" params="parent name color">
+    <xacro:macro name="toplevel" params="parent name color">
         <joint name="${parent}_${name}_joint" type="fixed">
             <origin xyz="${toplevel_offset_x} ${toplevel_offset_y} ${toplevel_offset_z}" rpy="0 0 0"/>
             <parent link="${parent}_link"/>
@@ -45,13 +45,13 @@
                 </geometry>
             </collision>
         </link>
-    </macro>
+    </xacro:macro>
 
 
     <!-- Note: The following macros are purely organizational in nature.  That is, they do not contribute to the
                geometry of the model.  They only wrap the sensor macros so they are grouped by function and position
     -->
-    <macro name="toplevel_front_infrared_array" params="offset_z">
+    <xacro:macro name="toplevel_front_infrared_array" params="offset_z">
         <link name="toplevel_front_infrared_array_link">
             <!-- This is an organizational link it has no dimensions -->
         </link>
@@ -60,9 +60,9 @@
             <child link="toplevel_front_infrared_array_link"/>
         </joint>
         <infrared_array_2_front_upper parent="toplevel_front_infrared_array" offset_z="${offset_z}"/>
-    </macro>
+    </xacro:macro>
 
-    <macro name="toplevel_back_infrared_array" params="offset_z">
+    <xacro:macro name="toplevel_back_infrared_array" params="offset_z">
         <link name="toplevel_back_infrared_array_link">
             <!-- This is an organizational link it has no dimensions -->
         </link>
@@ -71,7 +71,7 @@
             <child link="toplevel_back_infrared_array_link"/>
         </joint>
         <infrared_array_2_back_upper parent="toplevel_back_infrared_array" offset_z="${offset_z}"/>
-    </macro>
+    </xacro:macro>
 
     <!--
 
@@ -86,7 +86,7 @@
     and below the toplevel platter.  To move the standoff below, adjust the z offset by half the height of the standoff.
     -->
 
-    <property name="toplevel_standoff_offset_z" value="${-standoff_height/2}"/>
+    <xacro:property name="toplevel_standoff_offset_z" value="${-standoff_height/2}"/>
 
     <standoff_5in parent="toplevel" number="0" x_loc="0.0676402" y_loc="0.1314196" z_loc="${toplevel_standoff_offset_z}"/>
     <standoff_5in parent="toplevel" number="1" x_loc="0.0676402" y_loc="-0.1314196" z_loc="${toplevel_standoff_offset_z}"/>
@@ -94,14 +94,14 @@
     <standoff_5in parent="toplevel" number="3" x_loc="-0.052832" y_loc="0.1314196" z_loc="${toplevel_standoff_offset_z}"/>
 
     <!-- This calculation is needed to position the infrared sensor under the top level platter -->
-    <property name="toplevel_infrared_offset_z" value="${-(infrared_height/2 + platter_height/2)}"/>
+    <xacro:property name="toplevel_infrared_offset_z" value="${-(infrared_height/2 + platter_height/2)}"/>
 
     <toplevel_front_infrared_array offset_z="${toplevel_infrared_offset_z}"/>
     <toplevel_back_infrared_array offset_z="${toplevel_infrared_offset_z}"/>
 
-    <property name="laser_offset_x" value=""/>
-    <property name="laser_offset_y" value=""/>
-    <property name="laser_offset_z" value="${toplevel_top_offset_z + laser_size_z/2"/>
+    <xacro:property name="laser_offset_x" value=""/>
+    <xacro:property name="laser_offset_y" value=""/>
+    <xacro:property name="laser_offset_z" value="${toplevel_top_offset_z + laser_size_z/2"/>
 
     <xv11_laser parent="toplevel" color="DarkGrey" offset_z="${laser_offset_z}"/>
 

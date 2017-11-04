@@ -13,8 +13,12 @@
     <include file="$(find arlobot_bringup)/launch/includes/robot.launch.xml"/>
 
     <include file="$(find arlobot_bringup)/launch/includes/mobile_base.launch.xml">
-        <rosparam command="load" file="$(find arlobot_bringup)/config/arlobot.yaml"/>
         <arg name="simulated" value="$(arg simulated)"/>
+	<!-- There is a problem with the rosparam tag below.  ROS writes this on start up:
+		WARN: unrecognized 'rosparam' tag in <include> tag
+	     I don't know what the problem is though.
+	-->
+        <rosparam command="load" file="$(find arlobot_bringup)/config/arlobot.yaml" />
     </include>
 
 

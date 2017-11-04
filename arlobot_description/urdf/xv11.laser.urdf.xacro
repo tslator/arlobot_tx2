@@ -3,19 +3,19 @@
 <robot name="xv11_laser" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- A box-and-cylinder XV11 laser scanner -->
-  <property name="xv11_laser_bottom_size_x" value="0.1238"/>
-  <property name="xv11_laser_bottom_size_y" value="0.1048"/>
-  <property name="xv11_laser_bottom_size_z" value="0.0841"/>
-  <property name="xv11_laser_disk_radius" value="0.0381"/>
-  <property name="xv11_laser_disk_height" value="0.0144"/>
+  <xacro:property name="xv11_laser_bottom_size_x" value="0.1238"/>
+  <xacro:property name="xv11_laser_bottom_size_y" value="0.1048"/>
+  <xacro:property name="xv11_laser_bottom_size_z" value="0.0841"/>
+  <xacro:property name="xv11_laser_disk_radius" value="0.0381"/>
+  <xacro:property name="xv11_laser_disk_height" value="0.0144"/>
 
-  <property name="xv11_laser_size_x" value="${xv11_laser_bottom_size_x}"/>
-  <property name="xv11_laser_size_y" value="${xv11_laser_bottom_size_y}"/>
-  <property name="xv11_laser_size_z" value="${xv11_laser_bottom_size_z + xv11_laser_disk_height}"/>
+  <xacro:property name="xv11_laser_size_x" value="${xv11_laser_bottom_size_x}"/>
+  <xacro:property name="xv11_laser_size_y" value="${xv11_laser_bottom_size_y}"/>
+  <xacro:property name="xv11_laser_size_z" value="${xv11_laser_bottom_size_z + xv11_laser_disk_height}"/>
 
 
   <!-- Define the laser macro -->
-  <macro name="xv11_laser" params="parent color">
+  <xacro:macro name="xv11_laser" params="parent color">
     <joint name="${parent}_laser_bottom_joint" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <parent link="${parent}_link"/>
@@ -98,6 +98,6 @@
      <origin xyz="0 0 0.0145" rpy="0 0 0" />
    </joint>
 
-  </macro>
+  </xacro:macro>
 
  </robot>

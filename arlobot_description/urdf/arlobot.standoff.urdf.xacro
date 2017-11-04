@@ -3,7 +3,7 @@
 <robot name="standoff" xmlns:xacro="http://ros.org/wiki/xacro">
 
 
-    <property name="standoff_radius" value="0.00635"/>
+    <xacro:property name="standoff_radius" value="0.00635"/>
 
     <xacro:macro name="standoff_5in" params="parent number x_loc y_loc z_loc">
         <joint name="${parent}_standoff_5in_${number}_joint" type="fixed">

@@ -22,7 +22,7 @@
     <!-- The mid level macro essentially defines the middle platter of the Arlobot.  There are four 5 in standoffs/supports
     which mount on the baselevel platter.
     -->
-    <macro name="midlevel" params="parent name color">
+    <xacro:macro name="midlevel" params="parent name color">
         <joint name="${parent}_${name}_joint" type="fixed">
             <origin xyz="${midlevel_offset_x} ${midlevel_offset_y} ${midlevel_offset_z}" rpy="0 0 0"/>
             <parent link="${parent}_link"/>
@@ -43,19 +43,19 @@
                 </geometry>
             </collision>
         </link>
-    </macro>
+    </xacro:macro>
 
 
     <!-- The PC case macro -->
-    <property name="pc_case_size_x" value="0.2286"/>
-    <property name="pc_case_size_y" value="0.1969"/>
-    <property name="pc_case_size_z" value="0.0762"/>
+    <xacro:property name="pc_case_size_x" value="0.2286"/>
+    <xacro:property name="pc_case_size_y" value="0.1969"/>
+    <xacro:property name="pc_case_size_z" value="0.0762"/>
 
-    <property name="pc_case_offset_x" value="0"/>
-    <property name="pc_case_offset_y" value="0"/>
-    <property name="pc_case_offset_z" value="${midlevel_top_offset_z + pc_case_size_z/2}"/>
+    <xacro:property name="pc_case_offset_x" value="0"/>
+    <xacro:property name="pc_case_offset_y" value="0"/>
+    <xacro:property name="pc_case_offset_z" value="${midlevel_top_offset_z + pc_case_size_z/2}"/>
 
-    <macro name="pc_case" params="parent color">
+    <xacro:macro name="pc_case" params="parent color">
         <joint name="${parent}_pc_case_joint" type="fixed">
             <origin xyz="${pc_case_offset_x} ${pc_case_offset_y} ${pc_case_offset_z}" rpy="0 0 0" />
             <parent link="${parent}_link" />
@@ -75,12 +75,12 @@
                 <material name="${color}" />
             </visual>
         </link>
-    </macro>
+    </xacro:macro>
 
     <!-- Note: The following macros are purely organizational in nature.  That is, they do not contribute to the
                geometry of the model.  They only wrap the sensor macros so they are grouped by function and position
     -->
-    <macro name="midlevel_front_ultrasonic_array" params="offset_z">
+    <xacro:macro name="midlevel_front_ultrasonic_array" params="offset_z">
         <link name="midlevel_front_ultrasonic_array_link">
             <!-- This is an organizational link it has no dimensions -->
         </link>
@@ -89,9 +89,9 @@
             <child link="midlevel_front_ultrasonic_array_link"/>
         </joint>
         <ultrasonic_array_3_front parent="midlevel_front_ultrasonic_array" offset_z="${offset_z}"/>
-    </macro>
+    </xacro:macro>
 
-    <macro name="midlevel_back_ultrasonic_array" params="offset_z">
+    <xacro:macro name="midlevel_back_ultrasonic_array" params="offset_z">
         <link name="midlevel_back_ultrasonic_array_link">
             <!-- This is an organizational link it has no dimensions -->
         </link>
@@ -100,9 +100,9 @@
             <child link="midlevel_back_ultrasonic_array_link"/>
         </joint>
         <ultrasonic_array_3_back parent="midlevel_back_ultrasonic_array" offset_z="${offset_z}"/>
-    </macro>
+    </xacro:macro>
 
-    <macro name="midlevel_front_infrared_array" params="offset_z">
+    <xacro:macro name="midlevel_front_infrared_array" params="offset_z">
         <link name="midlevel_front_infrared_array_link">
             <!-- This is an organizational link it has no dimensions -->
         </link>
@@ -111,9 +111,9 @@
             <child link="midlevel_front_infrared_array_link"/>
         </joint>
         <infrared_array_4_front parent="midlevel_front_infrared_array" offset_z="${offset_z}"/>
-    </macro>
+    </xacro:macro>
 
-    <macro name="midlevel_back_infrared_array" params="offset_z">
+    <xacro:macro name="midlevel_back_infrared_array" params="offset_z">
         <link name="midlevel_back_infrared_array_link">
             <!-- This is an organizational link it has no dimensions -->
         </link>
@@ -122,7 +122,7 @@
             <child link="midlevel_back_infrared_array_link"/>
         </joint>
         <infrared_array_4_back parent="midlevel_back_infrared_array" offset_z="${offset_z}"/>
-    </macro>
+    </xacro:macro>
 
 
     <!--
@@ -138,7 +138,7 @@
     and below the midlevel platter.  To move the standoff below, adjust the z offset by half the height of the standoff.
     -->
 
-    <property name="midlevel_standoff_offset_z" value="${-standoff_height/2}"/>
+    <xacro:property name="midlevel_standoff_offset_z" value="${-standoff_height/2}"/>
 
     <standoff_5in parent="midlevel" number="0" x_loc="0.0676402" y_loc="0.1314196" z_loc="${midlevel_standoff_offset_z}"/>
     <standoff_5in parent="midlevel" number="1" x_loc="0.0676402" y_loc="-0.1314196" z_loc="${midlevel_standoff_offset_z}"/>
@@ -146,13 +146,13 @@
     <standoff_5in parent="midlevel" number="3" x_loc="-0.052832" y_loc="0.1314196" z_loc="${midlevel_standoff_offset_z}"/>
 
     <!-- This calculation is needed to position the ultrasonic sensor on the top of the mid level platter -->
-    <property name="midlevel_ultrasonic_offset_z" value="${midlevel_top_offset_z + ultrasonic_height/2}"/>
+    <xacro:property name="midlevel_ultrasonic_offset_z" value="${midlevel_top_offset_z + ultrasonic_height/2}"/>
 
     <midlevel_front_ultrasonic_array offset_z="${midlevel_ultrasonic_offset_z}"/>
     <midlevel_back_ultrasonic_array offset_z="${midlevel_ultrasonic_offset_z}"/>
 
     <!-- This calculation is needed to position the infrared sensor under the mid level platter -->
-    <property name="midlevel_infrared_offset_z" value="${-(infrared_height/2 + platter_height/2)}"/>
+    <xacro:property name="midlevel_infrared_offset_z" value="${-(infrared_height/2 + platter_height/2)}"/>
 
     <midlevel_front_infrared_array offset_z="${midlevel_infrared_offset_z}"/>
     <midlevel_back_infrared_array offset_z="${midlevel_infrared_offset_z}"/>
