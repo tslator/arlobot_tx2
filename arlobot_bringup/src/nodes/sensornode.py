@@ -208,17 +208,4 @@ class SensorNode(BaseNode):
         rospy.loginfo("SensorNode shutdown")
 
 
-if __name__ == "__main__":
-    try:
-        sensornode = SensorNode()
-    except SensorNodeError as err:
-        rospy.fatal("Unable to instantiate SensorNode - {}".format(err))
-    else:
-        try:
-            sensornode.start()
-            sensornode.loop()
-        except rospy.ROSInterruptException as err:
-            rospy.fatal("Interrupt Exception raised in sensornode - {}".format(err))
-            sensornode.shutdown()
-
 # --- EOF ---

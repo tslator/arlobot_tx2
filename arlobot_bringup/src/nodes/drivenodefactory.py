@@ -1,11 +1,39 @@
 #!/usr/bin/env python
+from __future__ import print_function
+"""
+---------------------------------------------------------------------------------------------------
+File: drivenode.py
 
+Description: Provides implementation of the DriveNode which handles all velocity commands and 
+odometry publishing.
 
+Author: Tim Slator
+Date: 04NOV17
+License: MIT
+---------------------------------------------------------------------------------------------------
+"""
+
+"""
+---------------------------------------------------------------------------------------------------
+Imports
+---------------------------------------------------------------------------------------------------
+"""
+
+# Standard
+# None
+
+# Third Party
 import rospy
 
-from drivenode import SimulatedDriveNode, RealDriveNode
+# Project
+from drivenode import DriveNode
 
 
+"""
+---------------------------------------------------------------------------------------------------
+Classes
+---------------------------------------------------------------------------------------------------
+"""
 class DriveNodeFactoryError(Exception):
     pass
 
@@ -16,19 +44,15 @@ class DriveNodeFactory:
     """
 
     @classmethod
-    def create_drive_node(cls, name, debug=False):
-
-        simulated = rospy.get_param('/simulated', False)
-
-        if simulated:
-            return SimulatedDriveNode(name, debug)
-        else:
-            return RealDriveNode(name, debug)
+    def create_drive_node(cls, debug=False):
+        return DriveNode("DriveNode", debug)
 
 
 if __name__ == "__main__":
     try:
-        drivenode = DriveNodeFactory.create_drive_node("DriveNode")
+        debug = rospy.get_param('/debug', False)        
+        drivenode = DriveNodeFactory.create_drive_node(debug=debug)
+
     except DriveNodeFactoryError as err:
         rospy.fatal("Unable to instantiate DriveNode - {}".format(err))
     else:

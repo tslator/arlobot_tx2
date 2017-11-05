@@ -2,6 +2,7 @@
 
     <arg name="simulated"/>
     <arg name="enable_hal" default="true"/>
+    <arg name="enable_drive" default="true"/>
     <arg name="enable_sensor" default="true"/>
 
     <!--
@@ -14,23 +15,21 @@
                       sensors as laser scan.
     -->
 
-    <group unless="$(arg simulated)" >
-        <!-- Start the HAL node -->
-        <node if="$(arg enable_hal)" name="halnode" pkg="arlobot_bringup" type="halnode.py" output="screen" respawn="true">
-        </node>
-
-        <!-- Start the sensor node -->
-        <node if="$(arg enable_sensor)" name="sensornode" pkg="arlobot_bringup" type="sensornode.py" output="screen" respawn="true">
-        </node>
-    </group>
-
-    <!-- Start the drive node
-        Note: the simulated parameter must set prior to the drive node tag so that the factory can use the parameter
-        for instantiation.
+    <!-- 
+    Note: the simulated parameter must set prior to instantiating the HAL node.
     -->
     <param name="simulated" value="$(arg simulated)"/>
 
-    <node name="drivenode" pkg="arlobot_bringup" type="drivenodefactory.py" output="screen" respawn="true">
+    <!-- Start the HAL node -->
+    <node if="$(arg enable_hal)" name="halnode" pkg="arlobot_bringup" type="halnodefactory.py" output="screen" respawn="true">
+    </node>
+
+    <!-- Start the drive node -->
+    <node if="$(arg enable_hal)" name="drivenode" pkg="arlobot_bringup" type="drivenodefactory.py" output="screen" respawn="true">
+    </node>
+
+    <!-- Start the sensor node -->
+    <node if="$(arg enable_sensor)" name="sensornode" pkg="arlobot_bringup" type="sensornodefactory.py" output="screen" respawn="true">
     </node>
 
 </launch>
