@@ -64,8 +64,8 @@ http://wiki.ros.org/joy#joy_node.py
 '''
 
 
-Buttons = namedtuple('Buttons', 'A B X Y LB RB back start power button_stick_left button_stick_right')
-Axes = namedtuple('Axes', 'leftright_stick_left updown_stick_left leftright_stick_right updown_stick_right RT LT leftright_cross_key updown_crosskey')
+Buttons = namedtuple('Buttons', 'A B X Y LB RB LT RT back start power button_stick_left button_stick_right leftpress_left leftpress_right leftpress_up leftpress_down ')
+Axes = namedtuple('Axes', 'leftright_stick_left updown_stick_left leftright_stick_right updown_stick_right')
 Velocity = namedtuple('Velocity', 'angular linear')
 
 
