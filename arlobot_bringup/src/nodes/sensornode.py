@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 """
 ---------------------------------------------------------------------------------------------------
-File: halnode.py
+File: sensornode.py
 
-Description: Provides implementation of the HALNode which is the common access point for all 
-hardware devices.
+Description: Provides implementation of the SensorNode.
 
 Author: Tim Slator
 Date: 11APR17
@@ -111,7 +110,7 @@ class SensorNode(BaseNode):
         # Note: The sensor node aggregates all sensors including the Imu.  Data from the Imu is used by a many different
         # nodes for different purposes.  The sensor node is publishing orientation, linear acceleration and angular
         # velocity.
-        self._imu_pub = ImuPublisher(frame_id='imu_data')
+        self._imu_pub = ImuPublisher()
 
         # Range Array publishers - publish each sensor individually as <sensor>_x
         self._us_pub = UltrasonicArrayPublisher()
@@ -132,7 +131,7 @@ class SensorNode(BaseNode):
         self._infrared_sensors = None
 
         # Subscribers
-        # Note: Subscribers come last to prent callbacks before instance attributes
+        # Note: Subscribers come last to prevent callbacks before instance attributes
         # are created.
         self._angvelin_sub = rospy.Subscriber('HALAngularVelocityIn',
                                               HALAngularVelocityIn,

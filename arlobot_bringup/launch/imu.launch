@@ -1,0 +1,33 @@
+<launch>
+
+    <arg name="simulated" default="false"/>
+
+    <!--
+    This is the root launch file to launch the arlobot robot.  It contains:
+        - robot.launch.xml : launches nodes related to the robot model
+        - mobile_base.launch.xml : launches nodes related to robot base (real or simulated)
+    -->
+
+    <param name="/use_sim_time" value="False"/>
+
+    <!--
+    This launch file instantiates the arlobot nodes:
+        - halnode   : provides an abstraction interface and communications with various devices, e.g., PSOC, IMU, etc
+        - imunode : 
+    -->
+
+    <!-- 
+    Note: the simulated parameter must set prior to instantiating the HAL node.
+    -->
+    <param name="simulated" value="$(arg simulated)"/>
+
+    <!-- Start the HAL node -->
+    <node name="halnode" pkg="arlobot_bringup" type="halnodefactory.py" output="screen" respawn="true">
+    </node>
+
+    <!-- Start the imu node -->
+    <node name="imunode" pkg="arlobot_bringup" type="imunode.py" output="screen" respawn="true">
+    </node>
+
+
+</launch>

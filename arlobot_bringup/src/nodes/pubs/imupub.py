@@ -28,9 +28,8 @@ from sensor_msgs.msg import Imu
 
 
 class ImuPublisher(object):
-    def __init__(self, frame_id='imu'):
-        self._frame_id = frame_id
-        self._publisher = Publisher(frame_id, Imu, queue_size = 1)
+    def __init__(self, topic='imu', frame_id='base_footprint'):
+        self._publisher = Publisher(topic, Imu, queue_size = 1)
 
         self._imu_msg = Imu()
         self._imu_msg.header = Header(frame_id=frame_id, stamp=Time.now())

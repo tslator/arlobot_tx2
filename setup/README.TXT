@@ -55,6 +55,9 @@ Required Installations
 	50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 	60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 	70: -- -- -- -- -- -- -- --
+
+* Setup rules to access i2c
+    sudo bash -c 'echo \''KERNEL==\"i2c-[0-7]\",MODE=\"0666\"\'' > /etc/udev/rules.d/90-i2c.rules'
 	
 Note: At this point (with ARLOBOT_PYTHON_PATH (see pathsetup.conf) appended to PYTHONPATH) it
 should be possible to run the HAL node, e.g., rosrun arlobot_bringup halnode.py
@@ -75,5 +78,18 @@ ROS PACKAGE DEPENDENCIES
     Test:
         sudo xboxdrv
     sudo apt-get install xboxdrv
+
+--------------------------------------------------------------------------------------
+
+HOSTNAME
+
+1. Set hostname to arlobot
+    copy the hostname file in this directory to /etc/.
+
+    sudo cp hostname /etc/.
+
+    REBOOT for it to take place
+
+
         
 
