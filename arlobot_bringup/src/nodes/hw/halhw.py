@@ -223,8 +223,11 @@ class ArlobotHardware(object):
         self._psochw.set_speed(msg.linear, msg.angular)
 
     def start(self):
+        rospy.loginfo("Starting PsocHw ...")
         self._psochw and self._psochw.start()
+        rospy.loginfo("Starting ImuHw ...")
         self._imuhw and self._imuhw.start()
+        rospy.loginfo("Starting SensorHw ...")
         self._sensorhw and self._sensorhw.start()
 
     def shutdown(self):

@@ -26,7 +26,7 @@ Imports
 import rospy
 
 # Project
-from sensornode import SensorNode
+from sensornode import SensorNode, SensorNodeError
 
 
 class SensorNodeFactory(object):

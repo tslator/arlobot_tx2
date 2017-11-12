@@ -1,11 +1,20 @@
 This document describes how to install all components needed for Arlobot on TX2
 
+0. Move home to external drive
 1. Bringup TX2 (after every JetPack install we start here)
 2. Mount external drive (I'm using a 120G sata drive)
 3. Add call to arlobot.bash to ~/.bashrc
 4. Bring Ubuntu up-to-date
 5. Use the Jetson Hacks ROS install scripts
 6. Use the Arlobot ROS install script
+
+
+MOVE HOME TO EXTERNAL DRIVE
+
+After Jetpack update the home directory will be located on the eMMC.  Follow the directions in the
+reference to mount the SSD drive and point the /home directory the SSD mount point
+
+Ref: https://www.maketecheasier.com/move-home-folder-ubuntu/
 
 
 ARLOBOT PATH SETUP
