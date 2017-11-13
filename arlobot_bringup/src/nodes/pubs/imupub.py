@@ -22,7 +22,7 @@ Imports
 # None
 
 # Third-Party
-from rospy import Publisher, Time
+from rospy import Publisher, Time, loginfo
 from std_msgs.msg import Header
 from sensor_msgs.msg import Imu
 
@@ -71,7 +71,8 @@ class ImuPublisher(object):
         :param angvel: IMU angular velocity (x, y, z)
         :return: None
         """
-        self._publisher.publish(self._msg(orient, linaccel, angvel))
+        if orient is not None and linaccel is not None and angvel is not None:
+            self._publisher.publish(self._msg(orient, linaccel, angvel))
 
 
 def module_test():

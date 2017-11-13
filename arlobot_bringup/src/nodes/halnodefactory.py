@@ -26,8 +26,9 @@ Imports
 import rospy
 
 # Project
-from halnode import HALNode
+from halnode import HALNode, HALNodeError
 from hw.halhw import ArlobotHardware, SimulatedHardware
+
 
 class HALFactory(object):
     @classmethod

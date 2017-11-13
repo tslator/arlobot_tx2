@@ -31,7 +31,7 @@ import os
 
 # Project
 from i2cdevice import I2CDeviceError
-from utils.logger import Logger
+from nodes.utils.logger import Logger
 
 
 # I2C addresses
@@ -667,6 +667,29 @@ def module_test():
     from i2cdevice import I2CDevice, I2CDeviceError
     import sys
     import time
+    import math
+
+    def quat_to_euler(x, y, z, w):
+        roll = 0.0
+        pitch = 0.0
+        yaw = 0.0
+
+        sinr = 2.0 * (w * x + y * z)
+        cosr = 1.0 - 2.0 * (x * x + y * y)
+        roll = math.atan2(sinr, cosr)
+
+        sinp = 2.0 * (w * y - z * x)
+        if abs(sinp) >= 1:
+            pitch = math.copysign(math.pi / 2, sinp)
+        else:
+            pitch = math.asin(sinp)
+
+        siny = 2.0 * (w * z + x * y)
+        cosy = 1.0 - 2.0 * (y * y + z * z)
+        yaw = math.atan2(siny, cosy)
+
+        return yaw, pitch, roll
+
 
     calibrate = False
 
@@ -683,6 +706,7 @@ def module_test():
         bno = BNO055(i2c=i2c, logger=Logger())
 
         bno.begin()
+        
         status, self_test, error = bno.get_system_status()
         print("status: {}, self_test: {}, error: {}".format(bin(status), bin(self_test), bin(error)))
 
@@ -715,8 +739,23 @@ def module_test():
 
         while True:
             heading, roll, pitch = bno.read_euler()
-            euler_str = 'heading: {:6.3f}, roll: {:6.3f}, pitch: {:6.3f}\r'.format(heading, roll, pitch)
-            sys.stdout.write(euler_str)
+            # Note: For some reason, roll has opposite sign from the expected value.  Per the BNO055
+            # documentation and per yaw, pitch, roll, definition, roll should be positive for 
+            # clockwise rotation and negative for counter-clockwise rotation.  I found this hard
+            # to believe, so I implemented a quat_to_euler function to take the raw quaternion and
+            # calculate yaw, pitch, roll.  Using that function, roll is positive for cw and negative
+            # for ccw.
+            # I tried setting the x value of the remap to have negative sign but that didn't have
+            # any effect.
+            # Ultimately, since it is just a sign difference, it can transform it with a '-' sign,
+	    # but it would be nice to know why it comes out wrong -- maybe a setup/config error.
+            # I'll have to decide where to fix this.
+            quat = bno.read_quaternion()
+            heading1, roll1, pitch1 = quat_to_euler(*quat)
+            quat_str = "x: {:6.3f}, y: {:6.3f}, z: {:6.3f}, w: {:6.3f}".format(*quat)
+            # Note: roll is transformed to -roll
+            euler_str = 'y: {:6.3f}, r: {:6.3f}, p: {:6.3f}\r'.format(heading, -roll, pitch)
+            sys.stdout.write(quat_str + ' ' + euler_str)
             sys.stdout.flush()
             time.sleep(0.1)
 
