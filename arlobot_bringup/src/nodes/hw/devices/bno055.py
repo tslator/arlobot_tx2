@@ -611,7 +611,16 @@ class BNO055(object):
         """Return the current absolute orientation as a tuple of heading, roll,
         and pitch euler angles in degrees.
         """
+
         heading, roll, pitch = self._read_vector(BNO055_EULER_H_LSB_ADDR)
+
+        # Note: There appears to be an issue regarding the sign of roll.  The value being
+        # returned has opposite sign of what is expected.  This was verified in the 
+        # test code below where the quat_to_quler function returns the expected roll but
+        # this function, read_euler, does not.  Since this is likely a error is the device
+        # configuration, I am documenting and fixing it here by just changing the sign.
+        roll = -roll
+
         return (heading/16.0, roll/16.0, pitch/16.0)
 
     def read_magnetometer(self):
@@ -739,22 +748,15 @@ def module_test():
 
         while True:
             heading, roll, pitch = bno.read_euler()
-            # Note: For some reason, roll has opposite sign from the expected value.  Per the BNO055
-            # documentation and per yaw, pitch, roll, definition, roll should be positive for 
-            # clockwise rotation and negative for counter-clockwise rotation.  I found this hard
-            # to believe, so I implemented a quat_to_euler function to take the raw quaternion and
-            # calculate yaw, pitch, roll.  Using that function, roll is positive for cw and negative
-            # for ccw.
-            # I tried setting the x value of the remap to have negative sign but that didn't have
-            # any effect.
-            # Ultimately, since it is just a sign difference, it can transform it with a '-' sign,
-	    # but it would be nice to know why it comes out wrong -- maybe a setup/config error.
-            # I'll have to decide where to fix this.
             quat = bno.read_quaternion()
-            heading1, roll1, pitch1 = quat_to_euler(*quat)
+
+            # This code was added to check the Euler angle calculations (see note in read_euler)
+            # read_euler returns roll with opposite orientation, - for cw rotation, + for ccw rotation
+            # quat_to_euler returns expected orientation, + for cw rotation, - for ccw rotation
+            #heading1, roll1, pitch1 = quat_to_euler(*quat)
+
             quat_str = "x: {:6.3f}, y: {:6.3f}, z: {:6.3f}, w: {:6.3f}".format(*quat)
-            # Note: roll is transformed to -roll
-            euler_str = 'y: {:6.3f}, r: {:6.3f}, p: {:6.3f}\r'.format(heading, -roll, pitch)
+            euler_str = 'y: {:6.3f}, r: {:6.3f}, p: {:6.3f}\r'.format(heading, roll, pitch)
             sys.stdout.write(quat_str + ' ' + euler_str)
             sys.stdout.flush()
             time.sleep(0.1)
