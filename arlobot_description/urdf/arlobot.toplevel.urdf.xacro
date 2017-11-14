@@ -13,6 +13,7 @@
             - One forward-facing HD web camera (arlobot.webcamera.urdf.xacro)
             - One speaker (arlobot.speaker.urdf.xacro)
             - One LIDAR (arlobot.xv11lidar.urdf.xacro)
+            - One IMU
     -->
 
     <xacro:include filename="$(find arlobot_description)/urdf/arlobot.standoff.urdf.xacro"/>
@@ -73,6 +74,39 @@
         <infrared_array_2_back_upper parent="toplevel_back_infrared_array" offset_z="${offset_z}"/>
     </xacro:macro>
 
+
+    <!-- IMU Module -->
+
+    <xacro:property name="imu_size_x" value="0.035"/>
+    <xacro:property name="imu_size_y" value="0.045"/>
+    <xacro:property name="imu_size_z" value="0.040"/>
+
+    <xacro:property name="imu_offset_x" value="0"/>
+    <xacro:property name="imu_offset_y" value="0"/>
+    <xacro:property name="imu_offset_z" value="${toplevel_top_offset_z + imu_size_z/2}"/>
+
+    <xacro:macro name="imu_module" params="parent color">
+        <joint name="${parent}_imu_joint" type="fixed">
+            <origin xyz="${imu_offset_x} ${imu_offset_y} ${imu_offset_z}" rpy="0 0 0" />
+            <parent link="${parent}_link" />
+            <child link="${parent}_imu_link" />
+        </joint>
+        <link name="${parent}_imu_link">
+            <inertial>
+                <mass value="0.001" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="${imu_size_x} ${imu_size_y} ${imu_size_z}" />
+                </geometry>
+                <material name="${color}" />
+            </visual>
+        </link>
+    </xacro:macro>
+
     <!--
 
     Build the Top Level
@@ -105,5 +139,6 @@
 
     <xv11_laser parent="toplevel" color="DarkGrey" offset_z="${laser_offset_z}"/>
 
+    <imu_module parent="toplevel" color="White"/>
 
 </robot>

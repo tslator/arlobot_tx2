@@ -24,7 +24,7 @@ class ImuState(object):
         self._linear_accel = None
 
         # Publishers
-        self._imu_pub = ImuPublisher()
+        self._imu_pub = ImuPublisher(frame_id="toplevel_imu_link")
 
         # Subscribers
         self._angvelin_sub = rospy.Subscriber('HALAngularVelocityIn',

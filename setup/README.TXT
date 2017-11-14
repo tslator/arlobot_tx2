@@ -80,13 +80,22 @@ ROS PACKAGE DEPENDENCIES
 
 
 - xbox360
-    Ref: https://andrewdai.co/xbox-controller-ros.html
-    sudo add-apt-repository ppa:grumbel/ppa
-    sudo apt-get update
+    sudo apt-get install xboxdrv
 
     Test:
         sudo xboxdrv
-    sudo apt-get install xboxdrv
+
+- Addition features (service
+    Ref: https://github.com/raelgc/ubuntu_xboxdrv
+
+    sudo apt-add-repository -y ppa:rael-gc/ubuntu-xboxdrv
+    sudo apt-get update
+    sudo apt-get install ubuntu-xboxdrv
+
+    sudo service xboxdrv restart
+
+    Test:
+        rosrun joy joy_node
 
 --------------------------------------------------------------------------------------
 
