@@ -12,7 +12,6 @@ License: MIT
 """
 from __future__ import print_function
 
-import math
 
 """
 ---------------------------------------------------------------------------------------------------
@@ -21,8 +20,13 @@ Imports
 """
 
 # Standard
-from math import pi
+import math
+
+# Third-party
 import tf
+
+# Project
+# None
 
 
 def normalize_angle(angle):
@@ -32,10 +36,10 @@ def normalize_angle(angle):
     :return: normalized angle
     """
     res = angle
-    while res > pi:
-        res -= 2.0 * pi
-    while res <= -pi:
-        res += 2.0 * pi
+    while res > math.pi:
+        res -= 2.0 * math.pi
+    while res <= -math.pi:
+        res += 2.0 * math.pi
 
     return res
 

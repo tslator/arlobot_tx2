@@ -29,7 +29,7 @@ from devices.i2cdevice import I2CDevice, I2CDeviceError
 from devices.imudevice import ImuDevice, ImuDeviceError
 from drivers.imudriver import ImuDriver, ImuDriverError
 from imuhw import ImuHw, ImuHwError
-from utils.logger import Logger
+from common import Logger
 
 """
 ---------------------------------------------------------------------------------------------------

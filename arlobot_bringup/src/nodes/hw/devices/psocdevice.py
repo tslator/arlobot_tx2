@@ -25,7 +25,7 @@ from .mockdevice import MockDevice
 from ..messages import Message, MSG_ID_CONTROL, MSG_ID_DEBUG, MSG_ID_SPEED, MSG_ID_STATUS, MSG_ID_POSITION, \
     MSG_ID_HEADING, MSG_ID_HEARTBEAT, StatusData, SpeedData, PositionData, HeadingData, HeartbeatData
 from .i2cdevice import I2CDeviceError
-from utils.logger import Logger
+from common import Logger
 
 """
 ---------------------------------------------------------------------------------------------------

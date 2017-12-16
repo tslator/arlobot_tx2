@@ -28,7 +28,7 @@ import rospy
 
 # Project
 from .messages import Message, ControlData, DebugData, SpeedData, MSG_ID_SPEED, MSG_ID_CONTROL, MSG_ID_DEBUG
-from utils.logger import Logger
+from common import Logger
 
 """
 ---------------------------------------------------------------------------------------------------

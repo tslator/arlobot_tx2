@@ -18,7 +18,7 @@ from .bno055 import BNO055
 from ..messages import Message, MSG_ID_EULER, EulerData, MSG_ID_MAGNETIC, MagneticData, MSG_ID_LINEAR_ACCEL, \
     LinearAccelData, MSG_ID_ANGULAR_VELOCITY, AngularVelocityData, MSG_ID_ORIENTATION, OrientationData, \
     MSG_ID_TEMPERATURE, TemperatureData
-from utils.logger import Logger
+from common import Logger
 
 
 class ImuDeviceError(Exception):

@@ -27,7 +27,7 @@ import rospy
 
 # Project
 from arlobot_bringup.msg import HALSpeedIn, HALPositionIn, HALHeadingIn
-from basenode import BaseNode
+from common import BaseNode
 from geometry_msgs.msg import Twist
 
 from hw.messages import SpeedData

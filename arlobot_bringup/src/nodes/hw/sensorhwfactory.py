@@ -28,7 +28,7 @@ import can
 from .sensorhw import SensorHw, SensorHwError
 from devices.sensordevice import SensorCanDevice, SensorDeviceError
 from drivers.sensordriver import SensorDriver, SensorDriverError
-from utils.logger import Logger
+from common import Logger
 
 """
 ---------------------------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
 
 # Project
-import basenode
+from common import BaseNode
 
 
 '''
@@ -73,7 +73,7 @@ class TeleopNodeError(Exception):
     pass
 
 
-class TeleopNode(basenode.BaseNode):
+class TeleopNode(BaseNode):
     """
     Teleoperation node.  Converts xbox key commands
     """

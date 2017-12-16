@@ -24,7 +24,7 @@ import time
 # None
 
 # Project
-from utils.logger import Logger
+from common import Logger
 
 
 """

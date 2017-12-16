@@ -19,18 +19,18 @@ Imports
 """
 
 # Standard
-import sys
+# None
 
 # Third-Party
 import can
 
 # Project
-from .psochw import PsocHw, PsocHwError
+from psochw import PsocHw, PsocHwError
 from drivers.psocdriver import PsocDriver, PsocDriverError
 from devices.i2cdevice import I2CDevice, I2CDeviceError
 from devices.psocdevice import PsocCANDevice, PsocI2CDevice, PsocMockDevice, PsocDeviceError
 from devices.mockdevice import MockDevice, MockDeviceError
-from utils.logger import Logger
+from common import Logger
 
 
 """

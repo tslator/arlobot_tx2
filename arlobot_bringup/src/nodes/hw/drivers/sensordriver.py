@@ -26,7 +26,7 @@ Imports
 
 # Project
 from .devicedriver import DeviceDriver
-from utils.logger import Logger
+from common import Logger
 
 
 """

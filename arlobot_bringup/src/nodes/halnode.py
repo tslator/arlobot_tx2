@@ -26,7 +26,7 @@ Imports
 import rospy
 
 # Project
-from basenode import BaseNode
+from common import BaseNode
 from hw.halhw import SimulatedHardware
 
 """

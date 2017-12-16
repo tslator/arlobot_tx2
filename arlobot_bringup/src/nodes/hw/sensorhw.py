@@ -24,7 +24,7 @@ import time
 # Third-Party
 
 # Project
-from utils.logger import Logger
+from common import Logger
 
 
 NUM_FRONT_SENSORS = 8

@@ -27,7 +27,7 @@ import time
 import rospy
 
 # Project
-from utils.logger import Logger
+from common import Logger
 
 """
 ---------------------------------------------------------------------------------------------------

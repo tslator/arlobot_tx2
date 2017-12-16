@@ -25,7 +25,7 @@
     </node>
 
     <!-- Start the drive node -->
-    <node if="$(arg enable_hal)" name="drivenode" pkg="arlobot_bringup" type="drivenodefactory.py" output="screen" respawn="true">
+    <node if="$(arg enable_drive)" name="drivenode" pkg="arlobot_bringup" type="drivenodefactory.py" output="screen" respawn="true">
     </node>
 
     <!-- Start the sensor node -->

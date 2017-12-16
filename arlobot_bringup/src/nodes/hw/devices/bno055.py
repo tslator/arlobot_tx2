@@ -22,7 +22,6 @@
 from __future__ import print_function
 
 # Standard Library
-import logging
 import time
 import os
 
@@ -31,7 +30,7 @@ import os
 
 # Project
 from i2cdevice import I2CDeviceError
-from nodes.utils.logger import Logger
+from common import Logger
 
 
 # I2C addresses

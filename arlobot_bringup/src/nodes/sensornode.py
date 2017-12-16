@@ -18,11 +18,14 @@ Imports
 ---------------------------------------------------------------------------------------------------
 """
 
+# Standard
+# None
+
 # Third-Party
 import rospy
 
 # Project
-from basenode import BaseNode
+from common import BaseNode
 from imustate import ImuState
 from sensorstate import UltrasonicSensorState, InfraredSensorState
 

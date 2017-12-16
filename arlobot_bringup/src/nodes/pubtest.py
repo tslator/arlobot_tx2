@@ -38,7 +38,7 @@ from pubs.halpub import (
 )
 import hw.messages as hwmsg
 import pubs.halpub as halpub
-from utils.logger import Logger
+from common import Logger
 
 """
 ---------------------------------------------------------------------------------------------------

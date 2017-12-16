@@ -41,7 +41,7 @@ from arlobot_bringup.msg import (
 
 #from messages import Message, SpeedData, PositionData, HeadingData, MSG_ID_SPEED, MSG_ID_POSITION, MSG_ID_HEADING
 import pubs.halpub as halpub
-from utils.logger import Logger
+from common import Logger
 
 """
 ---------------------------------------------------------------------------------------------------
@@ -62,6 +62,11 @@ class ArlobotHardware(object):
         }
 
         psoc_interface = rospy.get_param('Psoc Interface', 'i2c')
+        enable_imu = rospy.get_param('Enable IMU Hw', True)
+        enable_sensor = rospy.get_param('Enable Sensor Hw', True)
+
+        self._imuhw = None
+        self._sensorhw = None
 
         try:
             try:
@@ -71,15 +76,17 @@ class ArlobotHardware(object):
         except KeyError as err:
             raise HALNodeError("Unknown PSOC interface {}".format(psoc_interface), err)
 
-        try:
-            self._imuhw = ImuHwFactory.create_i2c(driver_cb=self._imuhw_callback, logger=Logger('rospy'))
-        except ImuHwFactoryError as err:
-            raise HALNodeError("Failure to instantiate IMU hardware", err)
+        if enable_imu:
+            try:
+                self._imuhw = ImuHwFactory.create_i2c(driver_cb=self._imuhw_callback, logger=Logger('rospy'))
+            except ImuHwFactoryError as err:
+                raise HALNodeError("Failure to instantiate IMU hardware", err)
 
-        try:
-            self._sensorhw = SensorHwFactory.create_can(driver_cb=self._sensorhw_callback, logger=Logger('rospy'))
-        except SensorHwFactoryError as err:
-            raise HALNodeError("Failure to instantiate Sensor hardware", err)
+        if enable_sensor:
+            try:
+                self._sensorhw = SensorHwFactory.create_can(driver_cb=self._sensorhw_callback, logger=Logger('rospy'))
+            except SensorHwFactoryError as err:
+                raise HALNodeError("Failure to instantiate Sensor hardware", err)
 
         '''
         ----------------------------------------------------------------------
@@ -167,7 +174,7 @@ class ArlobotHardware(object):
         Receives messages from the imuhw driver
         """
         rospy.logdebug("HALNode received imuhw msg {}".format(imuhw_msg))
-
+ 
         try:
             p = self._imuhw_callback_dict[imuhw_msg.type]
             p.publish(imuhw_msg.data)
@@ -213,39 +220,37 @@ class ArlobotHardware(object):
         Receives control data destined for the PsocHw driver
         """
         rospy.logdebug("HALControlOut: {}".format(msg))
-        self._psochw.set_control(msg.device, msg.debug)
+        self._psochw and self._psochw.set_control(msg.device, msg.debug)
 
     def _hal_speedoutmsg_callback(self, msg):
         """
         Receives speed data destined for the PsocHw driver
         """
         #rospy.loginfo("HALSpeedOut: {}".format(str(msg)))
-        self._psochw.set_speed(msg.linear, msg.angular)
+        self._psochw and self._psochw.set_speed(msg.linear, msg.angular)
 
     def start(self):
         rospy.loginfo("Starting PsocHw ...")
         self._psochw and self._psochw.start()
+
         rospy.loginfo("Starting ImuHw ...")
         self._imuhw and self._imuhw.start()
+
         rospy.loginfo("Starting SensorHw ...")
         self._sensorhw and self._sensorhw.start()
 
     def shutdown(self):
-        if self._psochw:
-            rospy.loginfo("PsocHw shutting down ...")
-            self._psochw.shutdown()
-            rospy.loginfo("PsocHw shutdown")
-            del self._psochw
-        if self._imuhw:
-            rospy.loginfo("ImuHw shutting down ...")
-            self._imuhw.shutdown()
-            rospy.loginfo("ImuHw shutdown")
-            del self._imuhw
-        if self._sensorhw:
-            rospy.loginfo("SensorHw shutting down ...")
-            self._sensorhw.shutdown()
-            rospy.loginfo("SensorHw shutdown")
-            del self._sensorhw
+        rospy.loginfo("PsocHw shutting down ...")
+        self._psochw and self._psochw.shutdown()
+        rospy.loginfo("PsocHw shut down")
+
+        rospy.loginfo("ImuHw shutting down ...")
+        self._imuhw and self._imuhw.shutdown()
+        rospy.loginfo("ImuHw shutdown")
+
+        rospy.loginfo("SensorHw shutting down ...")
+        self._sensorhw and self._sensorhw.shutdown()
+        rospy.loginfo("SensorHw shutdown")
 
 
 

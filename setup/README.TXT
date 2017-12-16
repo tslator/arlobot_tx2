@@ -110,4 +110,112 @@ HOSTNAME
 
 
         
+GATE ONE SETUP
+
+Ref: http://liftoffsoftware.com/
+GitHub: https://github.com/liftoff/GateOne/
+
+Gate One is a full-featured shell that can run in a web browser.
+It is written in Python and is Tornado-based.
+
+Installation
+Ref: https://www.digitalocean.com/community/tutorials/how-to-ssh-into-your-vps-from-the-browser-with-gateone
+
+I followed the instructions here but couldn't get the debian package stuff to work.  In the INSTALL.TXT
+for the Gate One source there are number of options including using setup.py.
+
+* curl -L http://github.com/liftoff/GateOne/archive/master.tar.gz > ~/arlobot_development/gateone/
+* tar xvzf gateone.tar.gz
+* sudo pip install tornado
+* sudo python setup.py 
+
+
+PYTEST install
+
+sudo pip install pytest
+sudo pip install pytest-pythonpath
+
+
+NODE RED
+
+
+
+Start on Bootup
+
+Ref: https://nodered.org/docs/getting-started/running
+
+
+Using PM2
+
+PM2 is a process manager for Node.js. It makes it easy to run applications on boot and ensure they are restarted if necessary.
+
+Note: PM2 is released under GNU-AGPL-3.0 license - please check the terms of the license before deploying.
+1. Install PM2
+
+sudo npm install -g pm2
+Note: sudo is required if running as a non-root user on Linux or OS X. If running on Windows, you will need to run in a command shell as Administrator, without the sudo command.
+If running on Windows, you should also ensure tail.exe is on your path, as described here.
+2. Determine the exact location of the node-red command.
+
+If you have done a global install of node-red, then on Linux/OS X the node-red command will probably be either: /usr/bin/node-red or /usr/local/bin/node-red. The command which node-red can be used to confirm the location.
+
+If you have done a local install, it will be node_modules/node-red/bin/node-red, relative to where you ran npm install from.
+
+3. Tell PM2 to run Node-RED
+
+The following command tells PM2 to run Node-RED, assuming /usr/bin/node-red as the location of the node-red command.
+
+The -- argument must appear before any arguments you want to pass to node-red.
+
+pm2 start /usr/bin/node-red -- -v
+Note: if you are running on a device like the Raspberry Pi or BeagleBone Black that have a constrained amount of memory, you must pass an additional argument:
+pm2 start /usr/bin/node-red --node-args="--max-old-space-size=128" -- -v
+Note: if you want to run as the root user, you must use the `--userDir` option to specify where Node-RED should store your data.
+This will start Node-RED in the background. You can view information about the process and access the log output using the commands:
+
+pm2 info node-red
+pm2 logs node-red
+More information about managing processes under PM2 is available here.
+
+4. Tell PM2 to run on boot
+
+PM2 is able to generate and configure a startup script suitable for the platform it is being run on.
+
+Run these commands and follow the instructions it provides:
+
+pm2 save
+pm2 startup
+for newer Linux systems that use systemd use
+
+pm2 startup systemd
+Temporary Note: There's an open issue on PM2 on GitHub which highlights an issue that has been introduced recently. Linux users need to manually edit the generated `/etc/init.d/pm2-init.sh` file and replace
+export PM2_HOME="/root/.pm2"
+to point at the correct directory, which would be like:
+export PM2_HOME="/home/{youruser}/.pm2"
+
+
+Output:
+sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u nvidia --hp /home/nvidia
+
+
+5. Reboot
+
+Finally, reboot and check everything starts as expected.
+
+
+ROS ROBOT UPSTART
+
+sudo apt install ros-kinetic-robot-upstart
+
+
+
+
+
+
+
+
+
+
+
+
 

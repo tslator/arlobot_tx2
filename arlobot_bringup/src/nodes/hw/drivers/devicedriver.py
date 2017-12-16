@@ -28,7 +28,7 @@ import time
 
 # Project
 from stoppablethread import StoppableThread
-from utils.logger import Logger
+from common import Logger
 
 
 """
